@@ -1,7 +1,6 @@
-from jinja2 import Environment, PackageLoader, select_autoescape
-import jinja2
+from jinja2 import Environment, FileSystemLoader
 import pandas as pd
-from regex import P
+import pathlib
 
 """
 DATA PROCESSING FUNCTIONS
@@ -13,7 +12,7 @@ def convert_csv_to_df(csv_file):
     return df
 
 
-# remove the first N rows from df
+# remove the first n rows from df
 def remove_first_rows(df, n):
     df = df.iloc[n:]
     return df
@@ -43,6 +42,75 @@ def color_red_if_positive(df):
     df.style.applymap(lambda x: 'background-color: red' if x == 'Positive' else 'background-color: white')
     return df
 
+# remove calibration readings from df
+def remove_calibration_readings(df):
+    df = df[df['Calibration Reading'] == False]
+    return df
+
+# a summary df filtered to only show results that equal positive in the results column
+def summary_df_filtered_to_positive(df):
+    df = df[df['Result'] == 'Positive']
+    return df
+
+# get calibration by filtering the df to show results that equal true in the calibration reading column
+def get_calibration_readings(df):
+    df = df[df['Calibration Reading'] == True]
+    return df
+
+
+"""
+FUNCTIONS FOR FIELDS NEEDED FOR TEMPLATE
+"""
+
+# testing start date - get first value of df column called date and first value of column called time and return a tuple
+def get_testing_start_date(df):
+    date = df['Date'].iloc[0]
+    time = df['Time'].iloc[0]
+    return (date, time)
+
+# testing end  date - get last value of df column called date and first value of column called time and return a tuple
+def get_testing_end_date(df):
+    date = df['Date'].iloc[-1]
+    time = df['Time'].iloc[-1]
+    return (date, time)
+
+# total number of calibration tests - count number times it sais true in the calibration reading column
+def total_num_calibration_tests(df):
+    df = get_calibration_readings(df)
+    print(df)
+    return len(df.index)
+
+
+# total number of readings - get number of rows in df
+def total_number_of_readings(df):
+    return len(df.index)
+
+
+# num positive readings - get number of rows in df where result = positive
+def num_positive_readings(df):
+    df = summary_df_filtered_to_positive(df)
+    return len(df.index)
+
+# instrument type - get from first 5 rows of initial df / uncleaned df
+def instrument_details(df):
+    instrument_type = df.iloc[0:5]
+    name = instrument_type.iloc[0,1]
+    model = instrument_type.iloc[1,1]
+    type = instrument_type.iloc[2,1]
+    serial_num = instrument_type.iloc[3,1]
+    app_version = instrument_type.iloc[4,1]
+    return {'name': name, 'model': model, 'type': type, 'serial_num': serial_num, 'app_version': app_version}
+
+
+# if any positive readings - return true
+def is_positive_readings(df):
+    if len(summary_df_filtered_to_positive(df).index) > 0:
+        return True
+    else:
+        return False
+    
+
+
 """
 HTML GENERATION FUNCTIONS
 """
@@ -53,31 +121,19 @@ def return_df_as_html(df):
     html = df.to_html()
     return html
 
-# write html to file accept a list html objects
+# write html to file accept a list html objects (can merge HTML objects)
 def write_html_to_file(html_list, file_name):
     with open(file_name, 'w') as f:
         for html in html_list:
             f.write(html)
             
-# create a jinja2 environment
-def create_jinja2_environment():
-    env = Environment(
-        loader=PackageLoader('report_gen', 'templates'),
-        autoescape=select_autoescape(['html', 'xml'])
-    )
-    return env
 
-
-# create a jinja2 template
-def create_jinja2_template(env, template_name):
-    template = env.get_template(template_name)
+# set up jinja2 environment
+def set_up_jinja2_env(template_file, template_dir):
+    file_loader = FileSystemLoader(template_dir)
+    env = Environment(loader=file_loader)
+    template = env.get_template(template_file)
     return template
-
-
-# fill in the template with the data 
-def fill_template(template, data):
-    html = template.render(data)
-    return html
             
 """
 USER INPUT FUNCTIONS
@@ -86,7 +142,6 @@ USER INPUT FUNCTIONS
             
 # take a file path and make it windows friendly using pathlib
 def file_path_to_windows_friendly(file_path):
-    import pathlib
     file_path = pathlib.Path(file_path)
     return file_path
             
@@ -156,28 +211,91 @@ def get_save_location():
 columns_to_keep = ['Reading #', 'Concentration', 'Result',
        'Component', 'Component2', 'Side', 'Room']
 
-# df = convert_csv_to_df("C:\\Users\\dovid\\OneDrive\\Penguin Group\\First Project\\initial_data.csv")
+"""
+DATA PROCESSING (PANDAS)
+"""
+# df = convert_csv_to_df("C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\initial_data.csv")
 # make_header_row(df, 5)
 # df = remove_first_rows(df, 6)
 # df = remove_all_but_columns(df, columns_to_keep)
-# df = sort_df(df, ['Room', 'Reading #'])
-# df = color_red_if_positive(df)
-# a = return_df_as_html(df)
-# b = return_df_as_html(df)
 
-# write_html_to_file([a,b], "C:\\Users\\dovid\\OneDrive\\Penguin Group\\First Project\\report.html")
+# report_df = remove_calibration_readings(df)
+# report_df = sort_df(df, ['Room', 'Reading #'])
+# report_df = color_red_if_positive(df)
+# summary_df = summary_df_filtered_to_positive(df)
+# calibration_df = get_calibration_readings(df)
 
-# fields = ['company', 'project ID', 'date', 'location']
-
-# env = create_jinja2_environment()
-# template = create_jinja2_template(env, "C:\\Users\\dovid\\OneDrive\\Penguin Group\\First Project\\templates\\template_a.html")
-
-# data = {'date': '2019-01-01'}
-# template = fill_template(template, data)
-# print(template)
+# report_df_html = return_df_as_html(report_df)
+# summary_df_html = return_df_as_html(summary_df)
+# calibration_df_html = return_df_as_html(calibration_df)
 
 
-print(get_save_location())
+"""
+GET FIELDS TO NEEDED FOR RENDERING
+
+testing start date - get first value of df date and time column
+testing end date - get last value of df date and time column
+location name - get from input dialog box
+location address - get from input dialog box
+all calibration tests succeeded - (?not sure where this data is reported?)
+total number of calibration tests - get number of rows in calibration df
+total number of readings - get number of rows in df
+positive readings - get number of rows in df where result = positive
+report number - get from input dialog box
+instrument type - get from first 5 rows of initial df
+report results (lead based paint presant or not) - if any positive readings, report yes, otherwise report no
+calibration readings (reading number, reading value) - get from calibration df
+
+"""
+# field_df = convert_csv_to_df("C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\initial_data.csv")
+# print(field_df)
+# clean_df = make_header_row(field_df, 5)
+# clean_df = remove_first_rows(field_df, 6)
+# print(clean_df)
+# calibration_total = total_num_calibration_tests(clean_df)
+# without_calibration_df = remove_calibration_readings(clean_df)
+# start_date = get_testing_start_date(clean_df)
+# end_date = get_testing_end_date(clean_df)
+# readings_total = total_number_of_readings(clean_df)
+# positive_readings = num_positive_readings(clean_df)
+# instrument_detail = instrument_details(field_df)
+# results = is_positive_readings(clean_df)
+
+
+# print(f'Start Date: {start_date}, End Date: {end_date}, Calibration Total: {calibration_total}, Readings Total: {readings_total}, Positive Readings: {positive_readings}, Instrument Details: {instrument_detail}, Results: {results}')
+
+
+
+
+
+
+"""
+RENDERING HTML (jinja2)
+"""
+# template_dir = "C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\templates"
+# template = set_up_jinja2_env('template_a.html', template_dir=template_dir)
+# rendered = template.render(date = '2020-01-01')
+# file_name = 'rendered.html'
+# save_location = f'C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\app\\{file_name}'
+# write_html_to_file([rendered], save_location)
+
+
+df = convert_csv_to_df("C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\initial_data.csv")
+df = make_header_row(df, 5)
+df = remove_first_rows(df, 6)
+print(df.columns)
+# with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+#     print(df)
+calibration_total = total_num_calibration_tests(df)
+
+
+
+
+fields = ['location name', 'location address', 'report number']
+
+
+
+
 
 
 
