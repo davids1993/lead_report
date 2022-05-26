@@ -44,7 +44,7 @@ def color_red_if_positive(df):
 
 # remove calibration readings from df
 def remove_calibration_readings(df):
-    df = df[df['Calibration Reading'] == False]
+    df = df[df['Calibration Reading'] == 'FALSE']
     return df
 
 # a summary df filtered to only show results that equal positive in the results column
@@ -54,7 +54,7 @@ def summary_df_filtered_to_positive(df):
 
 # get calibration by filtering the df to show results that equal true in the calibration reading column
 def get_calibration_readings(df):
-    df = df[df['Calibration Reading'] == True]
+    df = df[df['Calibration Reading'] == 'TRUE']
     return df
 
 
@@ -247,22 +247,22 @@ report results (lead based paint presant or not) - if any positive readings, rep
 calibration readings (reading number, reading value) - get from calibration df
 
 """
-# field_df = convert_csv_to_df("C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\initial_data.csv")
-# print(field_df)
-# clean_df = make_header_row(field_df, 5)
-# clean_df = remove_first_rows(field_df, 6)
-# print(clean_df)
-# calibration_total = total_num_calibration_tests(clean_df)
-# without_calibration_df = remove_calibration_readings(clean_df)
-# start_date = get_testing_start_date(clean_df)
-# end_date = get_testing_end_date(clean_df)
-# readings_total = total_number_of_readings(clean_df)
-# positive_readings = num_positive_readings(clean_df)
-# instrument_detail = instrument_details(field_df)
-# results = is_positive_readings(clean_df)
+field_df = convert_csv_to_df("C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\initial_data.csv")
+print(field_df)
+clean_df = make_header_row(field_df, 5)
+clean_df = remove_first_rows(field_df, 6)
+print(clean_df)
+calibration_total = total_num_calibration_tests(clean_df)
+without_calibration_df = remove_calibration_readings(clean_df)
+start_date = get_testing_start_date(clean_df)
+end_date = get_testing_end_date(clean_df)
+readings_total = total_number_of_readings(clean_df)
+positive_readings = num_positive_readings(clean_df)
+instrument_detail = instrument_details(field_df)
+results = is_positive_readings(clean_df)
 
 
-# print(f'Start Date: {start_date}, End Date: {end_date}, Calibration Total: {calibration_total}, Readings Total: {readings_total}, Positive Readings: {positive_readings}, Instrument Details: {instrument_detail}, Results: {results}')
+print(f'Start Date: {start_date}, End Date: {end_date}, Calibration Total: {calibration_total}, Readings Total: {readings_total}, Positive Readings: {positive_readings}, Instrument Details: {instrument_detail}, Results: {results}')
 
 
 
@@ -280,13 +280,6 @@ RENDERING HTML (jinja2)
 # write_html_to_file([rendered], save_location)
 
 
-df = convert_csv_to_df("C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\initial_data.csv")
-df = make_header_row(df, 5)
-df = remove_first_rows(df, 6)
-print(df.columns)
-# with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-#     print(df)
-calibration_total = total_num_calibration_tests(df)
 
 
 
