@@ -118,7 +118,7 @@ HTML GENERATION FUNCTIONS
     
 # return df as html object 
 def return_df_as_html(df):
-    html = df.to_html()
+    html = df.to_html(classes='table table-striped text-center', justify='center')
     return html
 
 # write html to file accept a list html objects (can merge HTML objects)
@@ -194,6 +194,8 @@ def get_user_input(fields):
     root.mainloop()
     
     
+    
+    
 # get a file save location using tkinter
 def get_save_location():
     from tkinter import filedialog
@@ -209,25 +211,25 @@ def get_save_location():
 
 
 columns_to_keep = ['Reading #', 'Concentration', 'Result',
-       'Component', 'Component2', 'Side', 'Room']
+       'Component', 'Component2', 'Side', 'Room', 'Calibration Reading']
 
 """
 DATA PROCESSING (PANDAS)
 """
-# df = convert_csv_to_df("C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\initial_data.csv")
-# make_header_row(df, 5)
-# df = remove_first_rows(df, 6)
-# df = remove_all_but_columns(df, columns_to_keep)
+df = convert_csv_to_df("C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\initial_data.csv")
+make_header_row(df, 5)
+df = remove_first_rows(df, 6)
+df = remove_all_but_columns(df, columns_to_keep)
 
-# report_df = remove_calibration_readings(df)
-# report_df = sort_df(df, ['Room', 'Reading #'])
-# report_df = color_red_if_positive(df)
-# summary_df = summary_df_filtered_to_positive(df)
-# calibration_df = get_calibration_readings(df)
+report_df = remove_calibration_readings(df)
+report_df = sort_df(df, ['Room', 'Reading #'])
+report_df = color_red_if_positive(df)
+summary_df = summary_df_filtered_to_positive(df)
+calibration_df = get_calibration_readings(df)
 
-# report_df_html = return_df_as_html(report_df)
-# summary_df_html = return_df_as_html(summary_df)
-# calibration_df_html = return_df_as_html(calibration_df)
+report_df_html = return_df_as_html(report_df)
+summary_df_html = return_df_as_html(summary_df)
+calibration_df_html = return_df_as_html(calibration_df)
 
 
 """
@@ -261,10 +263,16 @@ positive_readings = num_positive_readings(clean_df)
 instrument_detail = instrument_details(field_df)
 results = is_positive_readings(clean_df)
 
+fields = {'start_date': start_date, 'end_date': end_date, 'calibration_total': calibration_total, 'readings_total': readings_total, 'positive_readings': positive_readings, 'instrument_detail': instrument_detail, 'results': results}
 
-print(f'Start Date: {start_date}, End Date: {end_date}, Calibration Total: {calibration_total}, Readings Total: {readings_total}, Positive Readings: {positive_readings}, Instrument Details: {instrument_detail}, Results: {results}')
+dialog_fields = ['location name', 'location address', 'report number']
 
+# FIX THIS 1 - get_user_input function is not working since it doesnt return any values
+# user_fields = get_user_input(dialog_fields)
+# FIX THIS 1 FAKE PATCH
+user_fields = {'location name': 'test', 'location address': 'test', 'report number': 'test'}
 
+all_fields = {**user_fields, **fields}
 
 
 
@@ -272,19 +280,19 @@ print(f'Start Date: {start_date}, End Date: {end_date}, Calibration Total: {cali
 """
 RENDERING HTML (jinja2)
 """
-# template_dir = "C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\templates"
-# template = set_up_jinja2_env('template_a.html', template_dir=template_dir)
-# rendered = template.render(date = '2020-01-01')
-# file_name = 'rendered.html'
-# save_location = f'C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\app\\{file_name}'
-# write_html_to_file([rendered], save_location)
+template_dir = "C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\templates"
+template = set_up_jinja2_env('template_a.html', template_dir=template_dir)
+rendered = template.render(**all_fields)
+file_name = 'rendered.html'
+save_location = f'C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\app\\{file_name}'
+write_html_to_file([rendered, report_df_html, summary_df_html, calibration_df_html], save_location)
 
 
 
 
 
 
-fields = ['location name', 'location address', 'report number']
+
 
 
 
