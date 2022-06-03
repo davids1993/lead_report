@@ -1,0 +1,126 @@
+p {
+    /* margin: 20px;
+    text-align: left; */
+    font-family: 'Times New Roman', Times, serif;
+    font-size: larger;
+    margin-left: 40px;
+    /* padding: 20px; */
+
+
+  }
+
+h1 {
+    /* text-align: left;
+    color: hsl(0, 0%, 0%); */
+    font-family: 'Times New Roman', Times, serif;
+    font-size: xx-large;
+    /* margin: 20px;
+    padding: 20px; */
+
+  }
+
+    h2 {
+        font-family: 'Times New Roman', Times, serif;
+        font-size: x-large;
+        /* text-align: left;
+        color: hsl(0, 0%, 0%);
+        margin: 20px;
+        padding: 20px; */
+
+
+    }
+
+h3 {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: larger;
+    margin-left: 40px;
+    /* text-align: left;
+    color: hsl(0, 0%, 0%);
+    margin: 10px;
+    padding: 5px; */
+
+}
+
+ul {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: large;
+    padding-left: 45px;
+    /* margin: 60px;
+    padding: 20px; */
+
+}
+
+.eor {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: x-large;
+    justify-content: center;
+    text-align: center;
+
+
+}
+
+.heading {
+
+    font-family: 'Times New Roman', Times, serif;
+    font-size: x-large;
+    text-align: center;
+    color: hsl(0, 0%, 0%);
+    margin: 20px;
+    padding: 20px;
+    border-style: solid;
+    border-color: #009879;
+
+}
+
+
+
+@page {
+    size: a4 portrait;
+    @frame header_frame {           /* Static Frame */
+        -pdf-frame-content: header_content;
+        left: 50pt; width: 512pt; top: 50pt; height: 40pt;
+    }
+    @frame content_frame {          /* Content Frame */
+        left: 50pt; width: 512pt; top: 90pt; height: 632pt;
+    }
+    @frame footer_frame {           /* Another static Frame */
+        -pdf-frame-content: footer_content;
+        left: 50pt; width: 512pt; top: 772pt; height: 40pt;
+    }
+}
+
+
+.tables {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    text-align: center;
+}
+
+
+.tables thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+
+.tables th,
+.tables td {
+    padding: 5px 10px;
+}
+
+
+.tables tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.tables tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.tables tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
