@@ -1,6 +1,9 @@
+from operator import index
+from unicodedata import name
 from jinja2 import Environment, FileSystemLoader
 import pandas as pd
 import pathlib
+import re
 
 """
 DATA PROCESSING FUNCTIONS
@@ -23,9 +26,20 @@ def remove_all_but_columns(df, columns_to_keep):
     return df
 
 
+# change the column order of df
+def change_column_order(df, column_order):
+    df = df[column_order]
+    return df
+
+
 # make row n in df the header row
 def make_header_row(df, n):
     df.columns = df.iloc[n]
+    return df
+
+# set df column names from list
+def set_df_column_names(df, column_names):
+    df.columns = column_names
     return df
 
 # print out the headers of df
@@ -35,11 +49,6 @@ def print_headers(df):
 # sort df by specified colums
 def sort_df(df, columns_to_sort_by):
     df = df.sort_values(by=columns_to_sort_by)
-    return df
-
-# color the df row red if the value states "Positive"
-def color_red_if_positive(df):
-    df.style.applymap(lambda x: 'background-color: red' if x == 'Positive' else 'background-color: white')
     return df
 
 # remove calibration readings from df
@@ -55,6 +64,15 @@ def summary_df_filtered_to_positive(df):
 # get calibration by filtering the df to show results that equal true in the calibration reading column
 def get_calibration_readings(df):
     df = df[df['Calibration Reading'] == 'TRUE']
+    return df
+
+def rename_columns(df, column_names):
+    df.columns = column_names
+    return df
+
+# convert nan to empty string
+def convert_nan_to_na(df):
+    df = df.fillna('N/A')
     return df
 
 
@@ -77,7 +95,6 @@ def get_testing_end_date(df):
 # total number of calibration tests - count number times it sais true in the calibration reading column
 def total_num_calibration_tests(df):
     df = get_calibration_readings(df)
-    print(df)
     return len(df.index)
 
 
@@ -97,9 +114,10 @@ def instrument_details(df):
     name = instrument_type.iloc[0,1]
     model = instrument_type.iloc[1,1]
     type = instrument_type.iloc[2,1]
-    serial_num = instrument_type.iloc[3,1]
+    serial = instrument_type.iloc[3,1]
     app_version = instrument_type.iloc[4,1]
-    return {'name': name, 'model': model, 'type': type, 'serial_num': serial_num, 'app_version': app_version}
+    info = {'name': name, 'model': model, 'type': type, 'serial': serial}
+    return ', '.join(str(key).upper() + ": " + str(value) for key, value in info.items())
 
 
 # if any positive readings - return true
@@ -114,11 +132,20 @@ def is_positive_readings(df):
 """
 HTML GENERATION FUNCTIONS
 """
+
+# regex to add table attributes to html
+def add_table_attributes(html):
+    html = re.sub(
+    r'<table([^>]*)>',
+    r'<table\1 repeat="1">',
+    html)
+    return html
     
     
 # return df as html object 
 def return_df_as_html(df):
-    html = df.to_html(classes='table table-striped text-center', justify='center')
+    html = df.to_html(classes='tables', justify='center', index=False)
+    html = add_table_attributes(html)
     return html
 
 # write html to file accept a list html objects (can merge HTML objects)
@@ -126,7 +153,13 @@ def write_html_to_file(html_list, file_name):
     with open(file_name, 'w') as f:
         for html in html_list:
             f.write(html)
-            
+
+# merge html objects
+def merge_html_objects(html_list):
+    html = ""
+    for html_object in html_list:
+        html += html_object
+    return html
 
 # set up jinja2 environment
 def set_up_jinja2_env(template_file, template_dir):
@@ -166,7 +199,6 @@ def fetch(entries):
         field = entry[0]
         text  = entry[1].get()
         values[field] = text
-    print(values)
     return values
 
 
@@ -211,7 +243,7 @@ def get_save_location():
 
 
 columns_to_keep = ['Reading #', 'Concentration', 'Result',
-       'Component', 'Component2', 'Side', 'Room', 'Calibration Reading']
+       'Component', 'Component2', 'Substrate', 'Side', 'Room', 'Calibration Reading']
 
 """
 DATA PROCESSING (PANDAS)
@@ -220,16 +252,33 @@ df = convert_csv_to_df("C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project
 make_header_row(df, 5)
 df = remove_first_rows(df, 6)
 df = remove_all_but_columns(df, columns_to_keep)
+df = set_df_column_names(df, columns_to_keep)
+df = convert_nan_to_na(df)
 
-report_df = remove_calibration_readings(df)
-report_df = sort_df(df, ['Room', 'Reading #'])
-report_df = color_red_if_positive(df)
+
+df = change_column_order(df, ['Room', 'Reading #','Side', 'Component', 'Component2', 'Concentration', 'Substrate', 'Result', 'Calibration Reading'])
+df = df.rename(columns={'Reading #': 'Reading No.', 'Concentration': 'Lead (mg/cm2)', 'Result': 'Result', 'Component': 'Component', 'Component2': 'Sub Component', 'Side': 'Wall', 'Room': 'Room', 'Calibration Reading': 'Calibration Reading', 'Substrate': 'Substrate'})
+
+
+
+report_df_columns = ['Room', 'Reading No.', 'Lead (mg/cm2)', 'Result', 'Component', 'Sub Component', 'Wall']
+report_df = sort_df(df, ['Room', 'Reading No.'])
+report_df = remove_all_but_columns(report_df, report_df_columns)
+
+
+summary_df_columns = ['Reading No.', 'Lead (mg/cm2)', 'Result', 'Component', 'Sub Component', 'Wall', 'Room']
 summary_df = summary_df_filtered_to_positive(df)
+summary_df = remove_all_but_columns(summary_df, summary_df_columns)
+
+calibration_df_columns = ['Reading No.', 'Lead (mg/cm2)']
 calibration_df = get_calibration_readings(df)
+calibration_df = remove_all_but_columns(calibration_df, calibration_df_columns)
 
 report_df_html = return_df_as_html(report_df)
 summary_df_html = return_df_as_html(summary_df)
 calibration_df_html = return_df_as_html(calibration_df)
+
+
 
 
 """
@@ -250,10 +299,8 @@ calibration readings (reading number, reading value) - get from calibration df
 
 """
 field_df = convert_csv_to_df("C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\initial_data.csv")
-print(field_df)
 clean_df = make_header_row(field_df, 5)
 clean_df = remove_first_rows(field_df, 6)
-print(clean_df)
 calibration_total = total_num_calibration_tests(clean_df)
 without_calibration_df = remove_calibration_readings(clean_df)
 start_date = get_testing_start_date(clean_df)
@@ -263,14 +310,14 @@ positive_readings = num_positive_readings(clean_df)
 instrument_detail = instrument_details(field_df)
 results = is_positive_readings(clean_df)
 
-fields = {'start_date': start_date, 'end_date': end_date, 'calibration_total': calibration_total, 'readings_total': readings_total, 'positive_readings': positive_readings, 'instrument_detail': instrument_detail, 'results': results}
+fields = {'start_date': start_date, 'end_date': end_date, 'calibration_total': calibration_total, 'readings_total': readings_total, 'positive_readings': positive_readings, 'instrument_detail': instrument_detail, 'results': results, 'table1': report_df_html, 'table2': summary_df_html, 'table3': calibration_df_html}
 
 dialog_fields = ['location name', 'location address', 'report number']
 
 # FIX THIS 1 - get_user_input function is not working since it doesnt return any values
 # user_fields = get_user_input(dialog_fields)
 # FIX THIS 1 FAKE PATCH
-user_fields = {'location name': 'test', 'location address': 'test', 'report number': 'test'}
+user_fields = {'location_name': 'test', 'location_address': 'test', 'report_number': 'test'}
 
 all_fields = {**user_fields, **fields}
 
@@ -281,11 +328,19 @@ all_fields = {**user_fields, **fields}
 RENDERING HTML (jinja2)
 """
 template_dir = "C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\templates"
-template = set_up_jinja2_env('template_a.html', template_dir=template_dir)
+template = set_up_jinja2_env('template_html.html', template_dir=template_dir)
 rendered = template.render(**all_fields)
 file_name = 'rendered.html'
 save_location = f'C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\app\\{file_name}'
 write_html_to_file([rendered, report_df_html, summary_df_html, calibration_df_html], save_location)
+
+merged = merge_html_objects([rendered])
+
+from html2pdf import convert_html_to_pdf
+
+location = "C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\app\\test.pdf"
+
+convert_html_to_pdf(merged, location)
 
 
 
