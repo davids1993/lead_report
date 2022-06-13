@@ -208,8 +208,40 @@
 
 
     <pdf:nextpage>
-    <h1>Calibration Readings</h1>
-    <p>{{table3 | safe}}</p>
+    <h1>TEST!!</h1>
+
+    <table class="report-table" repeat="1">
+        <tr class="heading-row">
+        {% for item in headings %}
+            <th>{{item}}</th>
+        {% endfor %}
+        </tr>
+
+    {% set rm = namespace(room='None') %}
+    {% for dict in summary_df %}
+        {% if dict['Room'] != rm.room %}
+            {% set rm.room = dict['Room'] %}
+            <tr class="room-row">
+                <td colspan="{{headings|length}}">{{rm.room}}</td>
+            </tr>
+        {% endif %}
+        {% if dict['Result'] == 'Positive' %}
+            <tr class="positive-table-row">
+            {% for _, value in dict.items() %}
+                <td>{{value}}</td>
+            {% endfor %}
+            </tr>
+        {% else %}
+            <tr class="negative-table-row">
+            {% for _, value in dict.items() %}
+                <td>{{value}}</td>
+            {% endfor %}
+            </tr>
+        {% endif %}
+    {% endfor %}
+
+
+    </table>
 
     
     <br>

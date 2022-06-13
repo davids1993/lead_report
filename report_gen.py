@@ -76,6 +76,12 @@ def convert_nan_to_na(df):
     return df
 
 
+# convert a df to a dict
+def convert_df_to_dict(df):
+    dict = df.to_dict(orient='records')
+    return dict
+
+
 """
 FUNCTIONS FOR FIELDS NEEDED FOR TEMPLATE
 """
@@ -269,6 +275,7 @@ report_df = remove_all_but_columns(report_df, report_df_columns)
 summary_df_columns = ['Reading No.', 'Lead (mg/cm2)', 'Result', 'Component', 'Sub Component', 'Wall', 'Room']
 summary_df = summary_df_filtered_to_positive(df)
 summary_df = remove_all_but_columns(summary_df, summary_df_columns)
+summary_df_dict = convert_df_to_dict(summary_df)
 
 calibration_df_columns = ['Reading No.', 'Lead (mg/cm2)']
 calibration_df = get_calibration_readings(df)
@@ -319,7 +326,9 @@ dialog_fields = ['location name', 'location address', 'report number']
 # FIX THIS 1 FAKE PATCH
 user_fields = {'location_name': 'test', 'location_address': 'test', 'report_number': 'test'}
 
-all_fields = {**user_fields, **fields}
+tables = {'summary_df': summary_df_dict, 'headings': summary_df_dict[0].keys()}
+
+all_fields = {**user_fields, **fields, **tables}
 
 
 
@@ -327,7 +336,7 @@ all_fields = {**user_fields, **fields}
 """
 RENDERING HTML (jinja2)
 """
-template_dir = "C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\templates"
+template_dir = "C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project"
 template = set_up_jinja2_env('template_html.html', template_dir=template_dir)
 rendered = template.render(**all_fields)
 file_name = 'rendered.html'
