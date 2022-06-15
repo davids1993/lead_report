@@ -1,9 +1,9 @@
-from operator import index
-from unicodedata import name
+from collections import OrderedDict
 from jinja2 import Environment, FileSystemLoader
 import pandas as pd
 import pathlib
 import re
+
 
 """
 DATA PROCESSING FUNCTIONS
@@ -76,9 +76,42 @@ def convert_nan_to_na(df):
     return df
 
 
+"""
+Notes extraction functions
+"""
+# convert a df to a list of tupples
+def df_to_list_of_tupples(df):
+    records = df.to_records(index=False)
+    return list(records)
+
+
+# convert a list of 2 item tuples into a dict with key and list of values
+def list_of_tuples_to_dict(list_of_tuples):
+    notes_dict = {}
+    for t in list_of_tuples:
+        if t[0] in notes_dict:
+            notes_dict[t[0]].append(str(t[1]))
+        else:
+            notes_dict[t[0]] = [str(t[1])]
+            
+    return notes_dict
+
+
+# take a dict of keys and list values and convert the values into a string
+def dict_list_to_string(dict):
+    for key, value in dict.items():
+        dict[key] = ', '.join(str(value) for value in value if value != 'nan')
+    return dict
+    
+
+
+
+
+
+
 # convert a df to a dict
 def convert_df_to_dict(df):
-    dict = df.to_dict(orient='records')
+    dict = df.to_dict(orient='records', into=OrderedDict)
     return dict
 
 
@@ -231,34 +264,73 @@ def get_user_input(fields):
     b1.pack(side=tk.LEFT, padx=5, pady=5)
     root.mainloop()
     
-    
-    
-    
-# get a file save location using tkinter
-def get_save_location():
+
+
+# get a file save folder location using tkinter
+def get_save_folder_location():
     from tkinter import filedialog
     import tkinter as tk
     root = tk.Tk()
     root.withdraw()
-    file_path = filedialog.asksaveasfilename(initialdir = "/",title = "Select file",filetypes = (("html files","*.html"),("all files","*.*")))
+    file_path = filedialog.askdirectory(initialdir = "/",title = "Select folder to save files")
     file_path = file_path_to_windows_friendly(file_path)
     return file_path
+
+
+# tkinter prompt to select yes or no
+def prompt_yes_no(question):
+    from tkinter import messagebox
+    import tkinter as tk
+    root = tk.Tk()
+    root.withdraw()
+    response = messagebox.askyesno("Merge PDFs", question)
+    return response
+
+
+# tkinter dialog box to select multiple pdf file paths
+def select_multiple_pdf_files():
+    from tkinter import filedialog
+    import tkinter as tk
+    root = tk.Tk()
+    root.withdraw()
+    file_paths = filedialog.askopenfilenames(initialdir = "/",title = "Select files",filetypes = (("pdf files","*.pdf"),("all files","*.*")))
+    return file_paths
 
 
 
 
 
 columns_to_keep = ['Reading #', 'Concentration', 'Result',
-       'Component', 'Component2', 'Substrate', 'Side', 'Room', 'Calibration Reading']
+       'Component', 'Component2', 'Substrate', 'Side', 'Room', 'Calibration Reading', 'Notes']
 
 """
 DATA PROCESSING (PANDAS)
 """
-df = convert_csv_to_df("C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\initial_data.csv")
+file_path = select_csv_file()
+df = convert_csv_to_df(file_path)
 make_header_row(df, 5)
 df = remove_first_rows(df, 6)
 df = remove_all_but_columns(df, columns_to_keep)
 df = set_df_column_names(df, columns_to_keep)
+
+# create a df with Notes and Room columns
+note_df = remove_all_but_columns(df, ['Room', 'Notes'])
+
+# convert note df to a list of tuples
+note_data = df_to_list_of_tupples(note_df)
+
+# convert note tupple to dictionary with room name as key and a list as the value with the notes
+note_dict = list_of_tuples_to_dict(note_data)
+
+
+# convert the list of notes into a string
+note_dict = dict_list_to_string(note_dict)
+
+
+
+
+
+
 df = convert_nan_to_na(df)
 
 
@@ -270,6 +342,7 @@ df = df.rename(columns={'Reading #': 'Reading No.', 'Concentration': 'Lead (mg/c
 report_df_columns = ['Room', 'Reading No.', 'Lead (mg/cm2)', 'Result', 'Component', 'Sub Component', 'Wall']
 report_df = sort_df(df, ['Room', 'Reading No.'])
 report_df = remove_all_but_columns(report_df, report_df_columns)
+report_df_dict = convert_df_to_dict(report_df)
 
 
 summary_df_columns = ['Reading No.', 'Lead (mg/cm2)', 'Result', 'Component', 'Sub Component', 'Wall', 'Room']
@@ -305,7 +378,7 @@ report results (lead based paint presant or not) - if any positive readings, rep
 calibration readings (reading number, reading value) - get from calibration df
 
 """
-field_df = convert_csv_to_df("C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\initial_data.csv")
+field_df = convert_csv_to_df(file_path)
 clean_df = make_header_row(field_df, 5)
 clean_df = remove_first_rows(field_df, 6)
 calibration_total = total_num_calibration_tests(clean_df)
@@ -326,7 +399,7 @@ dialog_fields = ['location name', 'location address', 'report number']
 # FIX THIS 1 FAKE PATCH
 user_fields = {'location_name': 'test', 'location_address': 'test', 'report_number': 'test'}
 
-tables = {'summary_df': summary_df_dict, 'headings': summary_df_dict[0].keys()}
+tables = {'summary_df': summary_df_dict, 'results_df': report_df_dict, 'headings': summary_df_dict[0].keys(), 'notes': note_dict}
 
 all_fields = {**user_fields, **fields, **tables}
 
@@ -336,21 +409,40 @@ all_fields = {**user_fields, **fields, **tables}
 """
 RENDERING HTML (jinja2)
 """
-template_dir = "C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project"
+template_dir = ".\\template"
 template = set_up_jinja2_env('template_html.html', template_dir=template_dir)
 rendered = template.render(**all_fields)
 file_name = 'rendered.html'
-save_location = f'C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\app\\{file_name}'
-write_html_to_file([rendered, report_df_html, summary_df_html, calibration_df_html], save_location)
+save_location = get_save_folder_location()
+# save_location_rendered = f'{save_location}\\{file_name}'
+# write_html_to_file([rendered, report_df_html, summary_df_html, calibration_df_html], save_location)
 
 merged = merge_html_objects([rendered])
 
 from html2pdf import convert_html_to_pdf
 
-location = "C:\\Users\\dovid\\OneDrive\\Penguin Group\\first_project\\app\\test.pdf"
+location = f'{save_location}\\report.pdf'
 
 convert_html_to_pdf(merged, location)
 
+
+# ask user if they want to merge PDF's
+additional = prompt_yes_no('Do you want to add additional PDFs to the report?')
+
+if additional:
+    files = select_multiple_pdf_files()
+    print(files)
+    
+files = [file_path_to_windows_friendly(file) for file in files]
+
+report_file = file_path_to_windows_friendly(location)
+
+files.insert(0, report_file)
+
+from html2pdf import merge_pdfs
+
+merge_pdfs(files, f'{save_location}\\Merged_report.pdf')
+    
 
 
 

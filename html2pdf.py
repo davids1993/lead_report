@@ -1,4 +1,6 @@
+import PyPDF2
 from xhtml2pdf import pisa
+from PyPDF2 import PdfMerger
 
 # use xhtml2pdf to convert html to pdf 
 # need to paginate the html by fitting the html between the header and footer
@@ -8,12 +10,14 @@ from xhtml2pdf import pisa
 
 # merge multiple pdfs into one
 def merge_pdfs(pdf_list, output):
-    merger = PyPDF2.PdfFileMerge()
+    merger = PyPDF2.PdfMerger()
     for pdf in pdf_list:
         merger.append(pdf)
     merger.write(output)
     merger.close()
     
+    
+merge_pdfs(["C:\\Users\\dovid\\OneDrive\\Downloads\\Report.pdf", "C:\\Users\\dovid\\OneDrive\\Downloads\\Aristacare___Cedar_Oaks___Steam_Table.pdf"], "C:\\Users\\dovid\\OneDrive\\Downloads\\Report2.pdf")
 
 
 
