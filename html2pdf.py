@@ -17,7 +17,7 @@ def merge_pdfs(pdf_list, output):
     merger.close()
     
     
-merge_pdfs(["C:\\Users\\dovid\\OneDrive\\Downloads\\Report.pdf", "C:\\Users\\dovid\\OneDrive\\Downloads\\Aristacare___Cedar_Oaks___Steam_Table.pdf"], "C:\\Users\\dovid\\OneDrive\\Downloads\\Report2.pdf")
+# merge_pdfs(["C:\\Users\\dovid\\OneDrive\\Downloads\\Report.pdf", "C:\\Users\\dovid\\OneDrive\\Downloads\\Aristacare___Cedar_Oaks___Steam_Table.pdf"], "C:\\Users\\dovid\\OneDrive\\Downloads\\Report2.pdf")
 
 
 

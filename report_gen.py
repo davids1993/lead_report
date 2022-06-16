@@ -1,8 +1,19 @@
+
+
 from collections import OrderedDict
+from os import chdir
+from os import getcwd
 from jinja2 import Environment, FileSystemLoader
 import pandas as pd
 import pathlib
+from pathlib import Path
 import re
+
+p = pathlib.PurePath(__file__).parent
+chdir(p)
+
+print(getcwd())
+
 
 
 """
@@ -409,7 +420,7 @@ all_fields = {**user_fields, **fields, **tables}
 """
 RENDERING HTML (jinja2)
 """
-template_dir = ".\\template"
+template_dir = Path("./template")
 template = set_up_jinja2_env('template_html.html', template_dir=template_dir)
 rendered = template.render(**all_fields)
 file_name = 'rendered.html'
@@ -421,7 +432,7 @@ merged = merge_html_objects([rendered])
 
 from html2pdf import convert_html_to_pdf
 
-location = f'{save_location}\\report.pdf'
+location = Path(f'{save_location}/report.pdf')
 
 convert_html_to_pdf(merged, location)
 
@@ -433,15 +444,15 @@ if additional:
     files = select_multiple_pdf_files()
     print(files)
     
-files = [file_path_to_windows_friendly(file) for file in files]
+    files = [file_path_to_windows_friendly(file) for file in files]
 
-report_file = file_path_to_windows_friendly(location)
+    report_file = file_path_to_windows_friendly(location)
 
-files.insert(0, report_file)
+    files.insert(0, report_file)
 
-from html2pdf import merge_pdfs
+    from html2pdf import merge_pdfs
 
-merge_pdfs(files, f'{save_location}\\Merged_report.pdf')
+    merge_pdfs(files, f'{save_location}/Merged_report.pdf')
     
 
 
