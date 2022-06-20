@@ -56,7 +56,13 @@ ul {
     margin: 20px;
     padding: 20px;
     border-style: solid;
-    border-color: #009879;
+    border-color: #2f302f;
+
+}
+
+.logo {
+    width: 150px;
+    height: auto;
 
 }
 
@@ -73,71 +79,69 @@ ul {
     }
     @frame footer_frame {           /* Another static Frame */
         -pdf-frame-content: footer_content;
-        left: 50pt; width: 512pt; top: 772pt; height: 40pt;
+        left: 50pt; width: 512pt; top: 90pt; height: 632pt;
     }
 }
 
 
-.tables {
-    border-collapse: collapse;
-    margin: 25px 0;
-    font-size: 0.9em;
-    font-family: sans-serif;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+.tables tr td{
+    font-size: large;
     text-align: center;
+    margin: 20px;
+    padding : 2px 3px 2px 3px;
+    border-style: solid;
+    border-color: #2f302f;
+
 }
 
-
-.tables thead tr {
-    background-color: #009879;
-    color: #ffffff;
-    text-align: left;
-}
-
-.tables th,
-.tables td {
-    padding: 5px 10px;
-}
-
-
-.tables tbody tr {
-    border-bottom: 1px solid #dddddd;
-}
-
-.tables tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
-}
-
-.tables tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
-}
-
-.report-table{
-    border-collapse: collapse;
-    margin: 25px 0;
-    font-size: 0.9em;
-    font-family: sans-serif;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+.tables th{
+    font-size: large;
     text-align: center;
+    margin: 20px;
+    padding : 2px 3px 2px 3px;
+    border-style: solid;
+    border-color: #2f302f;
+
 }
+
 
 .heading-row{
-    background-color: #009879;
-    color: #ffffff;
-    text-align: left;
+    padding : 2px 3px 2px 3px;
+    border-bottom: 1.5px solid #000000;
+    
 }
 
 
 .negative-table-row{
-    border-bottom: 1px solid #dddddd;
-    background-color: #f3f3f3;
+    background-color: #ffffff;
+    padding : 2px 3px 2px 3px;
+    border-top: .5px solid;
+    border-color: #7a7878;
+    text-align: center;
 
 }
 
 .positive-table-row{
-    border-bottom: 1px solid #dddddd;
-    background-color: #c48282;
+    background-color: #b8b1b1;
+    padding : 2px 3px 2px 3px;
+    border-top: .5px solid #000000;
+    border-color: #7a7878;
+    text-align: center;
+
+}
+
+
+.notes-row{
+    background-color: #ffffff;
+    padding : 4px 3px 4px 3px;
+    text-align: left;
+
+}
+
+.room-row{
+    padding : 4px 3px 4px 3px;
+    text-align: left;
+    font-weight: bold;
+    border-top : 2px solid #7a7878;
 
 }

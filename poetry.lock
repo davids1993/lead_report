@@ -301,6 +301,14 @@ python-versions = "*"
 tqdm = "*"
 
 [[package]]
+name = "pysimplegui"
+version = "4.60.1"
+description = "Python GUIs for Humans. Launched in 2018. It's 2022 & PySimpleGUI is an ACTIVE & supported project. Super-simple to create custom GUI's. 325+ Demo programs & Cookbook for rapid start. Extensive documentation. Main docs at www.PySimpleGUI.org. Fun & your success are the focus. Examples using Machine Learning (GUI, OpenCV Integration), Rainmeter Style Desktop Widgets, Matplotlib + Pyplot, PIL support, add GUI to command line scripts, PDF & Image Viewers. Great for beginners & advanced GUI programmers."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "python-bidi"
 version = "0.4.2"
 description = "Pure python implementation of the BiDi layout algorithm"
@@ -536,7 +544,7 @@ svglib = ">=1.2.1"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "e51e08afb2a4a73c79811d343458e7a8829d9dd0d39a51cd8249a93185aad3bd"
+content-hash = "4cc083281ba1ef29f172f0b0093e2efcf4f2755a80bd98e5c0b43cdb5d1a017f"
 
 [metadata.files]
 arabic-reshaper = [
@@ -875,6 +883,10 @@ pypdf2 = [
 ]
 pypdf3 = [
     {file = "PyPDF3-1.0.6.tar.gz", hash = "sha256:c946f3273419e37258e35e72273f49904ab15723d87a761c1115ef99799f8c5f"},
+]
+pysimplegui = [
+    {file = "PySimpleGUI-4.60.1-py3-none-any.whl", hash = "sha256:c31c168deb1816d56811bfb4c881b3f4bcaca03b7d5f0ea7ada9772f397582a3"},
+    {file = "PySimpleGUI-4.60.1.tar.gz", hash = "sha256:3ea18e3aaea515bdf40e7d73015d101d92abddf214b134ae7674e99c58b96598"},
 ]
 python-bidi = [
     {file = "python-bidi-0.4.2.tar.gz", hash = "sha256:5347f71e82b3e9976dc657f09ded2bfe39ba8d6777ca81a5b2c56c30121c496e"},

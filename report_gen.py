@@ -308,6 +308,9 @@ def select_multiple_pdf_files():
     return file_paths
 
 
+    
+    
+
 
 
 
@@ -317,7 +320,8 @@ columns_to_keep = ['Reading #', 'Concentration', 'Result',
 """
 DATA PROCESSING (PANDAS)
 """
-file_path = select_csv_file()
+# file_path = select_csv_file()
+file_path = './initial_data.csv'
 df = convert_csv_to_df(file_path)
 make_header_row(df, 5)
 df = remove_first_rows(df, 6)
@@ -350,20 +354,29 @@ df = df.rename(columns={'Reading #': 'Reading No.', 'Concentration': 'Lead (mg/c
 
 
 
-report_df_columns = ['Room', 'Reading No.', 'Lead (mg/cm2)', 'Result', 'Component', 'Sub Component', 'Wall']
+report_df_columns = ['Room','Reading No.', 'Wall', 'Component', 'Sub Component', 'Substrate', 'Lead (mg/cm2)', 'Result']
 report_df = sort_df(df, ['Room', 'Reading No.'])
 report_df = remove_all_but_columns(report_df, report_df_columns)
 report_df_dict = convert_df_to_dict(report_df)
 
 
-summary_df_columns = ['Reading No.', 'Lead (mg/cm2)', 'Result', 'Component', 'Sub Component', 'Wall', 'Room']
+summary_df_columns = ['Room','Reading No.', 'Wall', 'Component', 'Sub Component', 'Substrate', 'Lead (mg/cm2)', 'Result']
 summary_df = summary_df_filtered_to_positive(df)
 summary_df = remove_all_but_columns(summary_df, summary_df_columns)
+summary_df = sort_df(summary_df, ['Room', 'Reading No.'])
 summary_df_dict = convert_df_to_dict(summary_df)
 
 calibration_df_columns = ['Reading No.', 'Lead (mg/cm2)']
 calibration_df = get_calibration_readings(df)
 calibration_df = remove_all_but_columns(calibration_df, calibration_df_columns)
+
+
+sequential_df_columns = ['Room','Reading No.', 'Wall', 'Component', 'Sub Component', 'Substrate', 'Lead (mg/cm2)', 'Result']
+sequential_df = df
+sequential_df['Reading No.'] = sequential_df['Reading No.'].astype(int)
+sequential_df = sort_df(sequential_df, ['Reading No.'])
+sequential_df = remove_all_but_columns(sequential_df, sequential_df_columns)
+sequential_df_dict = convert_df_to_dict(sequential_df)
 
 report_df_html = return_df_as_html(report_df)
 summary_df_html = return_df_as_html(summary_df)
@@ -410,7 +423,7 @@ dialog_fields = ['location name', 'location address', 'report number']
 # FIX THIS 1 FAKE PATCH
 user_fields = {'location_name': 'test', 'location_address': 'test', 'report_number': 'test'}
 
-tables = {'summary_df': summary_df_dict, 'results_df': report_df_dict, 'headings': summary_df_dict[0].keys(), 'notes': note_dict}
+tables = {'summary_df': summary_df_dict, 'results_df': report_df_dict, 'sequential_df': sequential_df_dict, 'headings': summary_df_dict[0].keys(), 'notes': note_dict, 'branding': False}
 
 all_fields = {**user_fields, **fields, **tables}
 
@@ -424,7 +437,8 @@ template_dir = Path("./template")
 template = set_up_jinja2_env('template_html.html', template_dir=template_dir)
 rendered = template.render(**all_fields)
 file_name = 'rendered.html'
-save_location = get_save_folder_location()
+# save_location = get_save_folder_location()
+save_location = './'
 # save_location_rendered = f'{save_location}\\{file_name}'
 # write_html_to_file([rendered, report_df_html, summary_df_html, calibration_df_html], save_location)
 
@@ -438,21 +452,21 @@ convert_html_to_pdf(merged, location)
 
 
 # ask user if they want to merge PDF's
-additional = prompt_yes_no('Do you want to add additional PDFs to the report?')
+# additional = prompt_yes_no('Do you want to add additional PDFs to the report?')
 
-if additional:
-    files = select_multiple_pdf_files()
-    print(files)
+# if additional:
+#     files = select_multiple_pdf_files()
+#     print(files)
     
-    files = [file_path_to_windows_friendly(file) for file in files]
+#     files = [file_path_to_windows_friendly(file) for file in files]
 
-    report_file = file_path_to_windows_friendly(location)
+#     report_file = file_path_to_windows_friendly(location)
 
-    files.insert(0, report_file)
+#     files.insert(0, report_file)
 
-    from html2pdf import merge_pdfs
+#     from html2pdf import merge_pdfs
 
-    merge_pdfs(files, f'{save_location}/Merged_report.pdf')
+#     merge_pdfs(files, f'{save_location}/Merged_report.pdf')
     
 
 

@@ -10,11 +10,14 @@
 <body>
 
     <!-- Content for Static Frame 'header_frame' -->
-    <div id="header_content">ENVOSPEC INC.</div>
+    <div id="header_content">ENVOSPEC INC. </div>
 
-    <!-- Content for Static Frame 'footer_frame' -->
-    <div id="footer_content">Lead Report Page - <pdf:pagenumber> </div>
-
+    <!-- Content for Static Frame 'footer_frame'
+    <div id="footer"><pdf:pagenumber> </div> -->
+    
+    {% if branding %}
+        <img class=logo src="logo/Logo 05.jpg" alt="">
+    {% endif %}
     <h1>Lead-Based Paint Report</h1>
     <p>On {{start_date[0]}} lead-based paint testing was performed on painted building components at the <br>
         aforementioned address & apartment. <br>
@@ -184,7 +187,12 @@
 
 
     <pdf:nextpage>
-    <p class="heading"> <b>ENVOSPEC INC</b> . <br>
+    {% if branding %}
+        <p class="heading"> <img class=logo src="logo/Logo 05.jpg" alt=""> <br>
+    {% endif %}
+    {% if not branding %}
+        <p class="heading"> <b>ENVOSPEC INC</b> . <br>
+    {% endif %}
     <b>347-470-0049 | envospecinc@gmail.com | 5308 13 Ave Brooklyn NY 11219</b>  <br>
     DETAILED REPORT OF LEAD PAINT INSPECTION FOR: Management <br>
 
@@ -203,7 +211,9 @@
     <table class="report-table" repeat="1">
         <tr class="heading-row">
         {% for item in headings %}
-            <th>{{item}}</th>
+            {% if item != 'Room' %}
+                <th>{{item}}</th>
+            {% endif %}
         {% endfor %}
         </tr>
 
@@ -212,26 +222,32 @@
         {% if dict['Room'] != rm.room %}
             {% if rm != 'None' %}
             {% set rooms = rm.room %}
+                {% if notes[rooms] %}
                 <tr class="notes-row">
                     <td colspan="{{headings|length}}">
-                        <b>Notes:</b> {{notes[rooms]}}
+                    <b>{{ rm.room|title }} Notes:</b> {{ notes[rooms] }}
                 </tr>
+                {% endif %}
             {% endif %}
             {% set rm.room = dict['Room'] %}
             <tr class="room-row">
-                <td colspan="{{headings|length}}">{{rm.room}}</td>
+                <td colspan="{{headings|length}}">Location - {{rm.room}}</td>
             </tr>
         {% endif %}
-        {% if dict['Result'] == 'Positive' %}
+        {% if dict['Result'] == 'Positive' or dict['Result'] == 'Inconclusive' %}
             <tr class="positive-table-row">
-            {% for _, value in dict.items() %}
-                <td>{{value}}</td>
+            {% for key, value in dict.items() %}
+                {% if key != 'Room' %}
+                    <td>{{value}}</td>
+                {% endif %}
             {% endfor %}
             </tr>
         {% else %}
             <tr class="negative-table-row">
-            {% for _, value in dict.items() %}
-                <td>{{value}}</td>
+            {% for key, value in dict.items() %}
+                {% if key != 'Room' %}
+                    <td>{{value}}</td>
+                {% endif %}
             {% endfor %}
             </tr>
         {% endif %}
@@ -242,6 +258,25 @@
     
 
     <pdf:nextpage>
+    {% if branding %}
+        <p class="heading"> <img class=logo src="logo/Logo 05.jpg" alt=""> <br>
+    {% endif %}
+    {% if not branding %}
+        <p class="heading"> <b>ENVOSPEC INC</b> . <br>
+    {% endif %}
+    <b>347-470-0049 | envospecinc@gmail.com | 5308 13 Ave Brooklyn NY 11219</b>  <br>
+    DETAILED REPORT OF LEAD PAINT INSPECTION FOR: Management <br>
+
+    Inspection Date: {{start_date[0]}} <br>
+    Report Date: {{start_date[0]}} <br>
+    Location: {{location_name}} <br>
+    Abatement Level: 0.5 mg/cm2 <br>
+    Report Number: {{report_number}} <br>
+    Total Readings: {{total_readings}} <br>
+    Job Start: {{start_date[0]}} <br>
+    Job End: {{end_date[0]}} <br>
+</p>
+
     <h1>Positive Results Summary</h1>
     <table class="report-table" repeat="1">
         <tr class="heading-row">
@@ -260,8 +295,10 @@
         {% endif %}
         {% if dict['Result'] == 'Positive' %}
             <tr class="positive-table-row">
-            {% for _, value in dict.items() %}
-                <td>{{value}}</td>
+            {% for key, value in dict.items() %}
+                {% if key != 'Room' %}
+                    <td>{{value}}</td>
+                {% endif %}
             {% endfor %}
             </tr>
         {% else %}
@@ -281,10 +318,54 @@
     <h1>Calibration Readings</h1>
     <p>{{table3 | safe}}</p>
 
+    <pdf:nextpage>
+    {% if branding %}
+        <p class="heading"> <img class=logo src="logo/Logo 05.jpg" alt=""> <br>
+    {% endif %}
+    {% if not branding %}
+        <p class="heading"> <b>ENVOSPEC INC</b> . <br>
+    {% endif %}
+    <b>347-470-0049 | envospecinc@gmail.com | 5308 13 Ave Brooklyn NY 11219</b>  <br>
+    DETAILED REPORT OF LEAD PAINT INSPECTION FOR: Management <br>
+
+    Inspection Date: {{start_date[0]}} <br>
+    Report Date: {{start_date[0]}} <br>
+    Location: {{location_name}} <br>
+    Abatement Level: 0.5 mg/cm2 <br>
+    Report Number: {{report_number}} <br>
+    Total Readings: {{total_readings}} <br>
+    Job Start: {{start_date[0]}} <br>
+    Job End: {{end_date[0]}} <br>
+</p>
+    <h1>Sequential Readings</h1>
+    <table class="report-table" repeat="1">
+        <tr class="heading-row">
+        {% for item in headings %}
+            <th>{{item}}</th>
+        {% endfor %}
+        </tr>
+    {% for dict in sequential_df %}
+       {% if dict['Result'] == 'Positive' or dict['Result'] == 'Inconclusive' %}
+            <tr class="positive-table-row">
+        {% for key, value in dict.items() %}
+                <td>{{value}}</td>
+        {% endfor %}
+        {% else %}
+            <tr class="negative-table-row">
+        {% for key, value in dict.items() %}
+                <td>{{value}}</td>
+        {% endfor %}
+        </tr>
+        {% endif %}
+    {% endfor %}
+
+    </table>
+
     
     <br>
     <br>
     <h2 class="eor">END OF READINGS</h2>
+    <pdf:nextpage>
 
     
     <p> <b>Viken Detection Pb200i XRF Lead Paint Analyzer Serial <br>Naftali Rottenberg - EPA Certification # LII-22-1980  <br>
