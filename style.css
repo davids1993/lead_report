@@ -1,7 +1,8 @@
 p {
     font-family: 'Times New Roman', Times, serif;
     font-size: larger;
-    margin-left: 40px;
+    margin-left: 60px;
+    margin-right: 40px;
 
 
 
@@ -34,7 +35,7 @@ h3 {
 ul {
     font-family: 'Times New Roman', Times, serif;
     font-size: large;
-    padding-left: 45px;
+    padding-left: 60px;
 
 }
 
@@ -63,7 +64,13 @@ ul {
 .logo {
     width: 150px;
     height: auto;
+    text-align: center;
 
+}
+
+
+.report{
+    text-align: center;
 }
 
 
@@ -79,9 +86,10 @@ ul {
     }
     @frame footer_frame {           /* Another static Frame */
         -pdf-frame-content: footer_content;
-        left: 50pt; width: 512pt; top: 90pt; height: 632pt;
+        left: 50pt; width: 512pt; top: 772pt; height: 20pt;
     }
 }
+
 
 
 .tables tr td{
@@ -145,3 +153,5 @@ ul {
     border-top : 2px solid #7a7878;
 
 }
+
+

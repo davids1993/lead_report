@@ -369,6 +369,7 @@ summary_df_dict = convert_df_to_dict(summary_df)
 calibration_df_columns = ['Reading No.', 'Lead (mg/cm2)']
 calibration_df = get_calibration_readings(df)
 calibration_df = remove_all_but_columns(calibration_df, calibration_df_columns)
+calibration_df_dict = convert_df_to_dict(calibration_df)
 
 
 sequential_df_columns = ['Room','Reading No.', 'Wall', 'Component', 'Sub Component', 'Substrate', 'Lead (mg/cm2)', 'Result']
@@ -414,7 +415,7 @@ positive_readings = num_positive_readings(clean_df)
 instrument_detail = instrument_details(field_df)
 results = is_positive_readings(clean_df)
 
-fields = {'start_date': start_date, 'end_date': end_date, 'calibration_total': calibration_total, 'readings_total': readings_total, 'positive_readings': positive_readings, 'instrument_detail': instrument_detail, 'results': results, 'table1': report_df_html, 'table2': summary_df_html, 'table3': calibration_df_html}
+fields = {'start_date': start_date, 'end_date': end_date, 'calibration_total': calibration_total, 'readings_total': readings_total, 'positive_readings': positive_readings, 'instrument_detail': instrument_detail, 'results': results, 'calibrations': calibration_df_dict}
 
 dialog_fields = ['location name', 'location address', 'report number']
 

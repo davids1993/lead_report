@@ -9,28 +9,34 @@
 </head>
 <body>
 
-    <!-- Content for Static Frame 'header_frame' -->
-    <div id="header_content">ENVOSPEC INC. </div>
 
-    <!-- Content for Static Frame 'footer_frame'
-    <div id="footer"><pdf:pagenumber> </div> -->
+    <!-- Content for Static Frame 'header_frame' -->
+    {% if branding %}
+    <div id="header_content">ENVOSPEC INC. </div>
+    {% endif %}
+
+    {% if not branding %}
+    <div id="header_content">Lead Report</div>
+    {% endif %}
+
+    <!-- Content for Static Frame 'footer_frame' -->
+    <div id="footer_content">Page <pdf:pagenumber> </div>
     
     {% if branding %}
         <img class=logo src="logo/Logo 05.jpg" alt="">
     {% endif %}
-    <h1>Lead-Based Paint Report</h1>
-    <p>On {{start_date[0]}} lead-based paint testing was performed on painted building components at the <br>
-        aforementioned address & apartment. <br>
-        An X-Ray Fluorescence Device (XRF) was used to test the painted components. Following you <br>
-        will find the results of the Lead-Based Paint inspection that was performed on these <br>
-        components. <br>
-        Included with this report is a Lead in Paint Certification sheet. This Certification sheets contains <br>
-        pertinent information including but not limited to license numbers, property location, date of <br>
-        inspection, and instrumentation used for testing. <br>
-        The enclosed Data Charts contain the results of this inspection. The important figures on the <br>
-        Charts are in the combined columns. The Action Level for lead in paint in New York, as set forth <br>
-        by the United States Environmental Protection Agency (EPA) and the Department of Housing <br>
-        and Urban Development (HUD), is 0.5 milligram per square centimeter (mg/cm2).</p>
+    <h1 class="report">Lead-Based Paint Report</h1>
+    <p>On {{start_date[0]}} lead-based paint testing was performed on painted building components at the aforementioned address & apartment.<br>
+        An X-Ray Fluorescence Device (XRF) was used to test the painted components. Following you
+        will find the results of the Lead-Based Paint inspection that was performed on these
+        components.
+        Included with this report is a Lead in Paint Certification sheet. This Certification sheets contains
+        pertinent information including but not limited to license numbers, property location, date of
+        inspection, and instrumentation used for testing.
+        The enclosed Data Charts contain the results of this inspection. The important figures on the
+        Charts are in the combined columns. The Action Level for lead in paint in New York, as set forth
+        by the United States Environmental Protection Agency (EPA) and the Department of Housing
+        and Urban Development (HUD), is 0.5 milligram per square centimeter (mg/cm2). </p>
 
     <ul>
         <li>Results below 0.5 mg/cm2 are negative (acceptable); results equal to or above this <br>
@@ -42,18 +48,18 @@
             and younger.</li>
     </ul>
 
-    <p>The calibration results of the XRF device, which was used for the painted surface testing, are <br>
-        listed on the Data Charts. The XRF calibration tests are the first six readings and the last six <br>
-        readings on the chart. These tests are taken in order to ensure that the XRF device is operating  <br>
-        properly. Lead Paint Standards supplied by the XRF device manufacturer (Viken) are used for <br>
-        the calibration tests. All the calibration tests were successful, as noted on the Data Charts. <br>
-        Attached is a copy of the lead paint inspection report. The first pages of the report indicate the <br>
-        areas tested. The readings are detailed by room, wall, and position on the wall. In each room, <br>
-        side A is always the same wall as the apartment entry, with sides B, C, and D following in a clockwise <br>
-        direction. The sides are noted in the data charts. <br>
-        A total of {{readings_total}} readings, including {{calibration_total}} calibration checks were taken on painted or varnished <br>
-        components. The results indicate that {{positive_readings}} positive readings were found during this inspection. <br>
-        Please call us with any questions or concerns that you may have regarding this report or any <br>
+    <p>The calibration results of the XRF device, which was used for the painted surface testing, are 
+        listed on the Data Charts. The XRF calibration tests are the first six readings and the last six
+        readings on the chart. These tests are taken in order to ensure that the XRF device is operating  
+        properly. Lead Paint Standards supplied by the XRF device manufacturer (Viken) are used for 
+        the calibration tests. All the calibration tests were successful, as noted on the Data Charts. 
+        Attached is a copy of the lead paint inspection report. The first pages of the report indicate the 
+        areas tested. The readings are detailed by room, wall, and position on the wall. In each room, 
+        side A is always the same wall as the apartment entry, with sides B, C, and D following in a clockwise 
+        direction. The sides are noted in the data charts. 
+        A total of {{readings_total}} readings, including {{calibration_total}} calibration checks were taken on painted or varnished 
+        components. The results indicate that {{positive_readings}} positive readings were found during this inspection. 
+        Please call us with any questions or concerns that you may have regarding this report or any 
         other lead-based paint issues.</p>
 
 
@@ -181,7 +187,9 @@
         <br>
         Naftali Rottenberg <br>
         EPA Certification #: LII-22-1980 <br>
+        {% if branding %}
         ENVOSPEC INC. <br>
+        {% endif %}
         EPA Certification #: LBP-F234326-1</p>
 
 
@@ -189,11 +197,13 @@
     <pdf:nextpage>
     {% if branding %}
         <p class="heading"> <img class=logo src="logo/Logo 05.jpg" alt=""> <br>
+    <b>347-470-0049 | office@envospecinc.com | 5308 13 Ave Brooklyn NY 11219</b>  <br>
     {% endif %}
+
     {% if not branding %}
-        <p class="heading"> <b>ENVOSPEC INC</b> . <br>
+     <p class="heading">
     {% endif %}
-    <b>347-470-0049 | envospecinc@gmail.com | 5308 13 Ave Brooklyn NY 11219</b>  <br>
+
     DETAILED REPORT OF LEAD PAINT INSPECTION FOR: Management <br>
 
     Inspection Date: {{start_date[0]}} <br>
@@ -202,6 +212,7 @@
     Abatement Level: 0.5 mg/cm2 <br>
     Report Number: {{report_number}} <br>
     Total Readings: {{total_readings}} <br>
+    Positive Readings: {{positive_readings}} <br>
     Job Start: {{start_date[0]}} <br>
     Job End: {{end_date[0]}} <br>
 </p>
@@ -252,6 +263,70 @@
             </tr>
         {% endif %}
     {% endfor %}
+
+    <tr class="room-row">
+        <td colspan="{{headings|length}}">Calibration Readings</td>
+    </tr>
+
+    {% for dict in calibrations %}
+    <tr class="negative-table-row">
+        {% for key, value in dict.items() %}
+            <td>{{value}}</td>
+            {% if key == 'Reading No.'%}
+            {% for i in range(4) %}
+                <td>     </td>
+            {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </tr>
+    {% endfor %}
+    </table>
+
+
+    <pdf:nextpage>
+    {% if branding %}
+    <p class="heading"> <img class=logo src="logo/Logo 05.jpg" alt=""> <br>
+    <b>347-470-0049 | office@envospecinc.com | 5308 13 Ave Brooklyn NY 11219</b>  <br>
+    {% endif %}
+
+    {% if not branding %}
+    <p class="heading">
+   {% endif %}
+
+    SEQUENTAIL READINGS REPORT OF LEAD PAINT INSPECTION FOR: Management <br>
+
+    Inspection Date: {{start_date[0]}} <br>
+    Report Date: {{start_date[0]}} <br>
+    Location: {{location_name}} <br>
+    Abatement Level: 0.5 mg/cm2 <br>
+    Report Number: {{report_number}} <br>
+    Total Readings: {{total_readings}} <br>
+    Positive Readings: {{positive_readings}} <br>
+    Job Start: {{start_date[0]}} <br>
+    Job End: {{end_date[0]}} <br>
+</p>
+    <h1></h1>
+    <table class="report-table" repeat="1">
+        <tr class="heading-row">
+        {% for item in headings %}
+            <th>{{item}}</th>
+        {% endfor %}
+        </tr>
+    {% for dict in sequential_df %}
+       {% if dict['Result'] == 'Positive' or dict['Result'] == 'Inconclusive' %}
+            <tr class="positive-table-row">
+        {% for key, value in dict.items() %}
+                <td>{{value}}</td>
+        {% endfor %}
+        {% else %}
+            <tr class="negative-table-row">
+        {% for key, value in dict.items() %}
+                <td>{{value}}</td>
+        {% endfor %}
+        </tr>
+        {% endif %}
+    {% endfor %}
+
     </table>
 
     
@@ -260,12 +335,14 @@
     <pdf:nextpage>
     {% if branding %}
         <p class="heading"> <img class=logo src="logo/Logo 05.jpg" alt=""> <br>
+    <b>347-470-0049 | office@envospecinc.com | 5308 13 Ave Brooklyn NY 11219</b>  <br>
     {% endif %}
+
     {% if not branding %}
-        <p class="heading"> <b>ENVOSPEC INC</b> . <br>
-    {% endif %}
-    <b>347-470-0049 | envospecinc@gmail.com | 5308 13 Ave Brooklyn NY 11219</b>  <br>
-    DETAILED REPORT OF LEAD PAINT INSPECTION FOR: Management <br>
+    <p class="heading">
+   {% endif %}
+
+    POSITIVE RESULTS SUMMARY OF LEAD PAINT INSPECTION FOR: Management <br>
 
     Inspection Date: {{start_date[0]}} <br>
     Report Date: {{start_date[0]}} <br>
@@ -273,11 +350,11 @@
     Abatement Level: 0.5 mg/cm2 <br>
     Report Number: {{report_number}} <br>
     Total Readings: {{total_readings}} <br>
+    Positive Readings: {{positive_readings}} <br>
     Job Start: {{start_date[0]}} <br>
     Job End: {{end_date[0]}} <br>
 </p>
 
-    <h1>Positive Results Summary</h1>
     <table class="report-table" repeat="1">
         <tr class="heading-row">
         {% for item in headings %}
@@ -314,52 +391,6 @@
     </table>
 
 
-    <pdf:nextpage>
-    <h1>Calibration Readings</h1>
-    <p>{{table3 | safe}}</p>
-
-    <pdf:nextpage>
-    {% if branding %}
-        <p class="heading"> <img class=logo src="logo/Logo 05.jpg" alt=""> <br>
-    {% endif %}
-    {% if not branding %}
-        <p class="heading"> <b>ENVOSPEC INC</b> . <br>
-    {% endif %}
-    <b>347-470-0049 | envospecinc@gmail.com | 5308 13 Ave Brooklyn NY 11219</b>  <br>
-    DETAILED REPORT OF LEAD PAINT INSPECTION FOR: Management <br>
-
-    Inspection Date: {{start_date[0]}} <br>
-    Report Date: {{start_date[0]}} <br>
-    Location: {{location_name}} <br>
-    Abatement Level: 0.5 mg/cm2 <br>
-    Report Number: {{report_number}} <br>
-    Total Readings: {{total_readings}} <br>
-    Job Start: {{start_date[0]}} <br>
-    Job End: {{end_date[0]}} <br>
-</p>
-    <h1>Sequential Readings</h1>
-    <table class="report-table" repeat="1">
-        <tr class="heading-row">
-        {% for item in headings %}
-            <th>{{item}}</th>
-        {% endfor %}
-        </tr>
-    {% for dict in sequential_df %}
-       {% if dict['Result'] == 'Positive' or dict['Result'] == 'Inconclusive' %}
-            <tr class="positive-table-row">
-        {% for key, value in dict.items() %}
-                <td>{{value}}</td>
-        {% endfor %}
-        {% else %}
-            <tr class="negative-table-row">
-        {% for key, value in dict.items() %}
-                <td>{{value}}</td>
-        {% endfor %}
-        </tr>
-        {% endif %}
-    {% endfor %}
-
-    </table>
 
     
     <br>
