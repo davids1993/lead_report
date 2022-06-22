@@ -1,13 +1,13 @@
-
-
 from collections import OrderedDict
 from os import chdir
 from os import getcwd
 from jinja2 import Environment, FileSystemLoader
 import pandas as pd
 import pathlib
-from pathlib import Path
+from pathlib import Path, PurePath
 import re
+from gui import input_window
+import PySimpleGUI as sg
 
 p = pathlib.PurePath(__file__).parent
 chdir(p)
@@ -227,6 +227,8 @@ USER INPUT FUNCTIONS
 def file_path_to_windows_friendly(file_path):
     file_path = pathlib.Path(file_path)
     return file_path
+
+    
             
             
 # create a tkinter dialog box to select a csv file
@@ -308,6 +310,26 @@ def select_multiple_pdf_files():
     return file_paths
 
 
+values = input_window()
+location_name = values[0]
+location_address = values[1]
+report_number = values[2]
+
+csv_lead_file = values[3]
+csv_lead_file = Path(csv_lead_file)
+additional_pdf_files = values[4].split(';')
+additional_pdf_files = [Path(file) for file in additional_pdf_files]
+save_location = values[5]
+save_location = Path(save_location)
+branding = values[6]
+
+
+
+
+
+
+
+
     
     
 
@@ -321,7 +343,7 @@ columns_to_keep = ['Reading #', 'Concentration', 'Result',
 DATA PROCESSING (PANDAS)
 """
 # file_path = select_csv_file()
-file_path = './initial_data.csv'
+file_path = csv_lead_file
 df = convert_csv_to_df(file_path)
 make_header_row(df, 5)
 df = remove_first_rows(df, 6)
@@ -415,16 +437,19 @@ positive_readings = num_positive_readings(clean_df)
 instrument_detail = instrument_details(field_df)
 results = is_positive_readings(clean_df)
 
+if results == True:
+    results = 'Positive'
+else:
+    results = 'Negative'
+
 fields = {'start_date': start_date, 'end_date': end_date, 'calibration_total': calibration_total, 'readings_total': readings_total, 'positive_readings': positive_readings, 'instrument_detail': instrument_detail, 'results': results, 'calibrations': calibration_df_dict}
 
 dialog_fields = ['location name', 'location address', 'report number']
 
-# FIX THIS 1 - get_user_input function is not working since it doesnt return any values
-# user_fields = get_user_input(dialog_fields)
-# FIX THIS 1 FAKE PATCH
-user_fields = {'location_name': 'test', 'location_address': 'test', 'report_number': 'test'}
 
-tables = {'summary_df': summary_df_dict, 'results_df': report_df_dict, 'sequential_df': sequential_df_dict, 'headings': summary_df_dict[0].keys(), 'notes': note_dict, 'branding': False}
+user_fields = {'location_name': location_name, 'location_address': location_address, 'report_number': report_number}
+
+tables = {'summary_df': summary_df_dict, 'results_df': report_df_dict, 'sequential_df': sequential_df_dict, 'headings': summary_df_dict[0].keys(), 'notes': note_dict, 'branding': branding}
 
 all_fields = {**user_fields, **fields, **tables}
 
@@ -437,9 +462,8 @@ RENDERING HTML (jinja2)
 template_dir = Path("./template")
 template = set_up_jinja2_env('template_html.html', template_dir=template_dir)
 rendered = template.render(**all_fields)
-file_name = 'rendered.html'
-# save_location = get_save_folder_location()
-save_location = './'
+# file_name = 'rendered.html'
+# save_location = save_location
 # save_location_rendered = f'{save_location}\\{file_name}'
 # write_html_to_file([rendered, report_df_html, summary_df_html, calibration_df_html], save_location)
 
@@ -447,7 +471,8 @@ merged = merge_html_objects([rendered])
 
 from html2pdf import convert_html_to_pdf
 
-location = Path(f'{save_location}/report.pdf')
+location = Path(f"{save_location}/lead-report.pdf")
+
 
 convert_html_to_pdf(merged, location)
 
@@ -455,19 +480,18 @@ convert_html_to_pdf(merged, location)
 # ask user if they want to merge PDF's
 # additional = prompt_yes_no('Do you want to add additional PDFs to the report?')
 
-# if additional:
-#     files = select_multiple_pdf_files()
-#     print(files)
+if Path.is_file(additional_pdf_files[0]):
+    report_file = file_path_to_windows_friendly(location)
+
+    additional_pdf_files.insert(0, report_file)
+
+    from html2pdf import merge_pdfs
+
+    merge_pdfs(additional_pdf_files, f'{save_location}/Merged-report.pdf')
     
-#     files = [file_path_to_windows_friendly(file) for file in files]
-
-#     report_file = file_path_to_windows_friendly(location)
-
-#     files.insert(0, report_file)
-
-#     from html2pdf import merge_pdfs
-
-#     merge_pdfs(files, f'{save_location}/Merged_report.pdf')
+sg.popup_ok('Report generated!', background_color='light grey', text_color='black')
+    
+    
     
 
 
