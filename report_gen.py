@@ -8,6 +8,7 @@ from pathlib import Path, PurePath
 import re
 from gui import input_window
 import PySimpleGUI as sg
+from datetime import date
 
 p = pathlib.PurePath(__file__).parent
 chdir(p)
@@ -442,7 +443,7 @@ if results == True:
 else:
     results = 'Negative'
 
-fields = {'start_date': start_date, 'end_date': end_date, 'calibration_total': calibration_total, 'readings_total': readings_total, 'positive_readings': positive_readings, 'instrument_detail': instrument_detail, 'results': results, 'calibrations': calibration_df_dict}
+fields = {'start_date': start_date, 'end_date': end_date, 'calibration_total': calibration_total, 'readings_total': readings_total, 'positive_readings': positive_readings, 'instrument_detail': instrument_detail, 'results': results, 'calibrations': calibration_df_dict, 'report_date': date.today().strftime('%m/%d/%Y')}
 
 dialog_fields = ['location name', 'location address', 'report number']
 
