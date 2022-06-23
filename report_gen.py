@@ -132,14 +132,14 @@ FUNCTIONS FOR FIELDS NEEDED FOR TEMPLATE
 
 # testing start date - get first value of df column called date and first value of column called time and return a tuple
 def get_testing_start_date(df):
-    date = df['Date'].iloc[0]
-    time = df['Time'].iloc[0]
+    date = min(df['Date'])
+    time = min(df['Time'])
     return (date, time)
 
 # testing end  date - get last value of df column called date and first value of column called time and return a tuple
 def get_testing_end_date(df):
-    date = df['Date'].iloc[-1]
-    time = df['Time'].iloc[-1]
+    date = max(df['Date'])
+    time = max(df['Time'])
     return (date, time)
 
 # total number of calibration tests - count number times it sais true in the calibration reading column
