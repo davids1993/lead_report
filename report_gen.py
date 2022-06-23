@@ -75,7 +75,7 @@ def summary_df_filtered_to_positive(df):
 
 # get calibration by filtering the df to show results that equal true in the calibration reading column
 def get_calibration_readings(df):
-    df = df[df['Calibration Reading'] == 'TRUE']
+    df = df[df['Component'] == 'CALIBRATION']
     return df
 
 def rename_columns(df, column_names):
