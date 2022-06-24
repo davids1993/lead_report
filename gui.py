@@ -1,6 +1,7 @@
 from pprint import pp
 from unicodedata import name
 import PySimpleGUI as sg
+import sys
 
 
 def input_window():
@@ -28,8 +29,14 @@ def input_window():
         return values
     
     
+def error_message(message):
+    sg.popup_error(message)
+    sys.exit("Error: " + message)
+    
+    
 
-
+def warning_message(message):
+    sg.popup(message)
     
     
 

@@ -1,20 +1,37 @@
 from collections import OrderedDict
 from os import chdir
-from os import getcwd
 from jinja2 import Environment, FileSystemLoader
 import pandas as pd
 import pathlib
-from pathlib import Path, PurePath
+from pathlib import Path
 import re
-from gui import input_window
+from gui import input_window, error_message, warning_message
 import PySimpleGUI as sg
 from datetime import date
+
+
 
 p = pathlib.PurePath(__file__).parent
 chdir(p)
 
-print(getcwd())
 
+
+
+"""
+TODO:
+
+# calibration number not going into template. - DONE spelling mistake
+
+# change detailed report and summary report sort order to be in the order of the csv don't sort - DONE
+
+# Add numbers to the suammry and detailed reports - DONE
+
+# do some basic error handling
+    - missing values in columns cause errors
+    - test with many missing values, like cell, or rows
+    - check inputs for errors. 
+        validate csv
+"""
 
 
 """
@@ -75,7 +92,7 @@ def summary_df_filtered_to_positive(df):
 
 # get calibration by filtering the df to show results that equal true in the calibration reading column
 def get_calibration_readings(df):
-    df = df[df['Component'] == 'CALIBRATION']
+    df = df[df['Component'].str.upper() == 'CALIBRATION']
     return df
 
 def rename_columns(df, column_names):
@@ -87,6 +104,25 @@ def convert_nan_to_na(df):
     df = df.fillna('N/A')
     return df
 
+"""
+VALIDATE DF FUNCTIONS
+"""
+# test if df contains all required columns and return missing columns
+def validate_df_columns(df, required_columns):
+    column_headers = list(df.iloc[5])
+    missing = []
+    for column in required_columns:
+        if column not in column_headers:
+            missing.append(column)
+    if len(missing) == len(required_columns):
+        error_message("Missing all required columns. Make sure your column headers start on line 7 of the csv.")
+    elif len(missing) > 0:
+        error_message('Missing columns: ' + str(missing))
+    
+
+    
+    
+# 
 
 """
 Notes extraction functions
@@ -133,15 +169,47 @@ FUNCTIONS FOR FIELDS NEEDED FOR TEMPLATE
 
 # testing start date - get first value of df column called date and first value of column called time and return a tuple
 def get_testing_start_date(df):
-    date = min(df['Date'])
-    time = min(df['Time'])
-    return (date, time)
+    # need all this to account for missing values or non date values
+    date_frame = pd.DataFrame()
+    time_frame = pd.DataFrame()
+
+    date_frame['Date'] = pd.to_datetime(df['Date'], errors='coerce')
+    time_frame['Time'] = pd.to_datetime(df['Time'], errors='coerce')
+    date_frame = date_frame.dropna()
+    time_frame = time_frame.dropna()
+    
+    # extract just the date and time from the datetime object
+    date_frame['Date'] = date_frame['Date'].dt.strftime('%m/%d/%Y')
+    time_frame['Time'] = time_frame['Time'].dt.time
+    
+    min_date = min(date_frame['Date'])
+    min_time = min(time_frame['Time'])
+    
+    return (min_date, min_time)
+    
+    
+
 
 # testing end  date - get last value of df column called date and first value of column called time and return a tuple
 def get_testing_end_date(df):
-    date = max(df['Date'])
-    time = max(df['Time'])
-    return (date, time)
+    # need all this to account for missing values or non date values
+    date_frame = pd.DataFrame()
+    time_frame = pd.DataFrame()
+
+    date_frame['Date'] = pd.to_datetime(df['Date'], errors='coerce')
+    time_frame['Time'] = pd.to_datetime(df['Time'], errors='coerce')
+    date_frame = date_frame.dropna()
+    time_frame = time_frame.dropna()
+    
+    # extract just the date and time from the datetime object
+    date_frame['Date'] = date_frame['Date'].dt.strftime('%m/%d/%Y')
+    time_frame['Time'] = time_frame['Time'].dt.time
+    
+    max_date = max(date_frame['Date'])
+    max_time = max(time_frame['Time'])
+
+    return (max_date, max_time)
+
 
 # total number of calibration tests - count number times it sais true in the calibration reading column
 def total_num_calibration_tests(df):
@@ -166,7 +234,6 @@ def instrument_details(df):
     model = instrument_type.iloc[1,1]
     type = instrument_type.iloc[2,1]
     serial = instrument_type.iloc[3,1]
-    app_version = instrument_type.iloc[4,1]
     info = {'name': name, 'model': model, 'type': type, 'serial': serial}
     return ', '.join(str(key).upper() + ": " + str(value) for key, value in info.items())
 
@@ -338,7 +405,7 @@ branding = values[6]
 
 
 columns_to_keep = ['Reading #', 'Concentration', 'Result',
-       'Component', 'Component2', 'Substrate', 'Side', 'Room', 'Calibration Reading', 'Notes']
+       'Component', 'Component2', 'Substrate', 'Side', 'Room', 'Room Number', 'Calibration Reading', 'Notes']
 
 """
 DATA PROCESSING (PANDAS)
@@ -346,10 +413,17 @@ DATA PROCESSING (PANDAS)
 # file_path = select_csv_file()
 file_path = csv_lead_file
 df = convert_csv_to_df(file_path)
+validate_df_columns(df, columns_to_keep)
 make_header_row(df, 5)
 df = remove_first_rows(df, 6)
 df = remove_all_but_columns(df, columns_to_keep)
 df = set_df_column_names(df, columns_to_keep)
+# merge room and room number columns then remove room number col
+df["Room"] = df['Room Number'].astype(str) +" "+ df["Room"].astype(str)
+df.drop('Room Number', axis=1, inplace=True)
+
+
+
 
 # create a df with Notes and Room columns
 note_df = remove_all_but_columns(df, ['Room', 'Notes'])
@@ -369,24 +443,36 @@ note_dict = dict_list_to_string(note_dict)
 
 
 
-df = convert_nan_to_na(df)
+
 
 
 df = change_column_order(df, ['Room', 'Reading #','Side', 'Component', 'Component2', 'Concentration', 'Substrate', 'Result', 'Calibration Reading'])
 df = df.rename(columns={'Reading #': 'Reading No.', 'Concentration': 'Lead (mg/cm2)', 'Result': 'Result', 'Component': 'Component', 'Component2': 'Sub Component', 'Side': 'Wall', 'Room': 'Room', 'Calibration Reading': 'Calibration Reading', 'Substrate': 'Substrate'})
 
 
+# fill N/A values be carefull they won't cause an error with a later operation like sorting
+# I want to be explicit about what I'm doing here with each column
+df['Reading No.'] = df['Reading No.'].fillna(0)
+df['Lead (mg/cm2)'] = df['Lead (mg/cm2)'].fillna('N/A')
+df['Result'] = df['Result'].fillna('N/A')
+df['Component'] = df['Component'].fillna('N/A')
+df['Sub Component'] = df['Sub Component'].fillna('N/A')
+df['Wall'] = df['Wall'].fillna('N/A')
+df['Room'] = df['Room'].fillna('N/A')
+df['Calibration Reading'] = df['Calibration Reading'].fillna('N/A')
+df['Substrate'] = df['Substrate'].fillna('N/A')
+
+
+
 
 report_df_columns = ['Room','Reading No.', 'Wall', 'Component', 'Sub Component', 'Substrate', 'Lead (mg/cm2)', 'Result']
-report_df = sort_df(df, ['Room', 'Reading No.'])
-report_df = remove_all_but_columns(report_df, report_df_columns)
+report_df = remove_all_but_columns(df, report_df_columns)
 report_df_dict = convert_df_to_dict(report_df)
 
 
 summary_df_columns = ['Room','Reading No.', 'Wall', 'Component', 'Sub Component', 'Substrate', 'Lead (mg/cm2)', 'Result']
 summary_df = summary_df_filtered_to_positive(df)
 summary_df = remove_all_but_columns(summary_df, summary_df_columns)
-summary_df = sort_df(summary_df, ['Room', 'Reading No.'])
 summary_df_dict = convert_df_to_dict(summary_df)
 
 calibration_df_columns = ['Reading No.', 'Lead (mg/cm2)']
@@ -430,6 +516,11 @@ field_df = convert_csv_to_df(file_path)
 clean_df = make_header_row(field_df, 5)
 clean_df = remove_first_rows(field_df, 6)
 calibration_total = total_num_calibration_tests(clean_df)
+
+if calibration_total == 0:
+    warning_message("No calibration tests were found in the file. You may want to check your spelling. The program will continue now..")
+    
+
 without_calibration_df = remove_calibration_readings(clean_df)
 start_date = get_testing_start_date(clean_df)
 end_date = get_testing_end_date(clean_df)

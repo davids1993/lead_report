@@ -99,6 +99,7 @@ ul {
     padding : 2px 3px 2px 3px;
     border-style: solid;
     border-color: #2f302f;
+    white-space: nowrap;
 
 }
 
@@ -111,6 +112,7 @@ ul {
     border-color: #2f302f;
 
 }
+
 
 
 .heading-row{
@@ -126,6 +128,7 @@ ul {
     border-top: .5px solid;
     border-color: #cdcaca;
     text-align: center;
+    white-space: nowrap;
 
 }
 
@@ -135,6 +138,7 @@ ul {
     border-top: .5px solid #000000;
     border-color: #7a7878;
     text-align: center;
+    white-space: nowrap;
 
 }
 
@@ -153,5 +157,4 @@ ul {
     border-top : 2px solid #7a7878;
 
 }
-
 
