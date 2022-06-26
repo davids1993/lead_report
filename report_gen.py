@@ -82,7 +82,7 @@ def sort_df(df, columns_to_sort_by):
 
 # remove calibration readings from df
 def remove_calibration_readings(df):
-    df = df[df['Calibration Reading'] == 'FALSE']
+    df = df[df['Component'].str.upper() != 'CALIBRATION']
     return df
 
 # a summary df filtered to only show results that equal positive in the results column
@@ -419,6 +419,14 @@ df = remove_first_rows(df, 6)
 df = remove_all_but_columns(df, columns_to_keep)
 df = set_df_column_names(df, columns_to_keep)
 # merge room and room number columns then remove room number col
+missing_room_df = remove_calibration_readings(df)
+if missing_room_df['Room Number'].isnull().values.any():
+    warning_message("You are mising some or all numbers in your [Room Number] column. Program will continue..")
+    
+
+
+df['Room Number'] = df['Room Number'].fillna('')
+df['Room'] = df['Room'].fillna('N/A')
 df["Room"] = df['Room Number'].astype(str) +" "+ df["Room"].astype(str)
 df.drop('Room Number', axis=1, inplace=True)
 
@@ -458,15 +466,16 @@ df['Result'] = df['Result'].fillna('N/A')
 df['Component'] = df['Component'].fillna('N/A')
 df['Sub Component'] = df['Sub Component'].fillna('N/A')
 df['Wall'] = df['Wall'].fillna('N/A')
-df['Room'] = df['Room'].fillna('N/A')
 df['Calibration Reading'] = df['Calibration Reading'].fillna('N/A')
 df['Substrate'] = df['Substrate'].fillna('N/A')
 
 
 
 
+
 report_df_columns = ['Room','Reading No.', 'Wall', 'Component', 'Sub Component', 'Substrate', 'Lead (mg/cm2)', 'Result']
 report_df = remove_all_but_columns(df, report_df_columns)
+report_df = remove_calibration_readings(report_df)
 report_df_dict = convert_df_to_dict(report_df)
 
 
@@ -541,7 +550,7 @@ dialog_fields = ['location name', 'location address', 'report number']
 
 user_fields = {'location_name': location_name, 'location_address': location_address, 'report_number': report_number}
 
-tables = {'summary_df': summary_df_dict, 'results_df': report_df_dict, 'sequential_df': sequential_df_dict, 'headings': summary_df_dict[0].keys(), 'notes': note_dict, 'branding': branding}
+tables = {'summary_df': summary_df_dict, 'results_df': report_df_dict, 'sequential_df': sequential_df_dict, 'headings': report_df_dict[0].keys(), 'notes': note_dict, 'branding': branding}
 
 all_fields = {**user_fields, **fields, **tables}
 
