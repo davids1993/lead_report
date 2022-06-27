@@ -8,6 +8,7 @@ import re
 from gui import input_window, error_message, warning_message
 import PySimpleGUI as sg
 from datetime import date
+import numpy as np
 
 
 
@@ -109,10 +110,25 @@ def convert_nan_to_na(df):
 # if the valu is greater than 0.5 mg/cm2, the result is positive
 # if the value is less than 0.5 mg/cm2, the result is negative
 # if the value is 0.5 mg/cm2, the result is inconclusive
+# def add_result_column(df):
+#     df['Result'] = df['Concentration'].apply(lambda x: 'Positive' if x > 0.5 else 'Negative' if x <= 0.4 else 'Inconclusive' if x == 0.5 else 'N/A')
+#     df['Result'] = df['Component'].apply(lambda x: 'N/A' if x == 'CALIBRATION' else df['Result'])
+#     return df
+
 def add_result_column(df):
-    df['Result'] = df['Concentration'].apply(lambda x: 'Positive' if x > 0.5 else 'Negative' if x <= 0.4 else 'Inconclusive' if x == 0.5 else 'N/A')
-    df['Result'] = df['Component'].apply(lambda x: 'N/A' if x == 'CALIBRATION' else x)
+    conditions = [
+    (df['Concentration'] > 0.5) & (df['Component'].str.upper() != 'CALIBRATION'),
+    (df['Concentration'] <= 0.4) & (df['Component'].str.upper() != 'CALIBRATION'),
+    (df['Concentration'] == 0.5) & (df['Component'].str.upper() != 'CALIBRATION')
+    ]
+
+    
+    values = ['Positive', 'Negative', 'Inconclusive']
+    df['Result'] = np.select(conditions, values, default='N/A')
     return df
+
+
+
 
 
 
