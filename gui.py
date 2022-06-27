@@ -1,5 +1,3 @@
-from pprint import pp
-from unicodedata import name
 import PySimpleGUI as sg
 import sys
 

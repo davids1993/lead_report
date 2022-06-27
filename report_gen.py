@@ -104,6 +104,18 @@ def convert_nan_to_na(df):
     df = df.fillna('N/A')
     return df
 
+# add column to df with reading results - positive, negative or inconclusive
+# this is calculated based on the value of the Lead (mg/cm2) column.
+# if the valu is greater than 0.5 mg/cm2, the result is positive
+# if the value is less than 0.5 mg/cm2, the result is negative
+# if the value is 0.5 mg/cm2, the result is inconclusive
+def add_result_column(df):
+    df['Result'] = df['Concentration'].apply(lambda x: 'Positive' if x > 0.5 else 'Negative' if x <= 0.4 else 'Inconclusive' if x == 0.5 else 'N/A')
+    df['Result'] = df['Component'].apply(lambda x: 'N/A' if x == 'CALIBRATION' else x)
+    return df
+
+
+
 """
 VALIDATE DF FUNCTIONS
 """
@@ -404,8 +416,8 @@ branding = values[6]
 
 
 
-columns_to_keep = ['Reading #', 'Concentration', 'Result',
-       'Component', 'Component2', 'Substrate', 'Side', 'Room', 'Room Number', 'Calibration Reading', 'Notes']
+columns_to_keep = ['Reading #', 'Concentration',
+       'Component', 'Component2', 'Substrate', 'Side', 'Room', 'Room Number', 'Calibration Reading', 'Notes', 'Date', 'Time']
 
 """
 DATA PROCESSING (PANDAS)
@@ -418,6 +430,8 @@ make_header_row(df, 5)
 df = remove_first_rows(df, 6)
 df = remove_all_but_columns(df, columns_to_keep)
 df = set_df_column_names(df, columns_to_keep)
+df['Concentration'] = df['Concentration'].astype(float)
+df = add_result_column(df)
 # merge room and room number columns then remove room number col
 missing_room_df = remove_calibration_readings(df)
 if missing_room_df['Room Number'].isnull().values.any():
@@ -429,6 +443,9 @@ df['Room Number'] = df['Room Number'].fillna('')
 df['Room'] = df['Room'].fillna('N/A')
 df["Room"] = df['Room Number'].astype(str) +" "+ df["Room"].astype(str)
 df.drop('Room Number', axis=1, inplace=True)
+
+
+clean_df = df
 
 
 
@@ -455,7 +472,7 @@ note_dict = dict_list_to_string(note_dict)
 
 
 df = change_column_order(df, ['Room', 'Reading #','Side', 'Component', 'Component2', 'Concentration', 'Substrate', 'Result', 'Calibration Reading'])
-df = df.rename(columns={'Reading #': 'Reading No.', 'Concentration': 'Lead (mg/cm2)', 'Result': 'Result', 'Component': 'Component', 'Component2': 'Sub Component', 'Side': 'Wall', 'Room': 'Room', 'Calibration Reading': 'Calibration Reading', 'Substrate': 'Substrate'})
+df = df.rename(columns={'Reading #': 'Reading No.', 'Concentration': 'Lead (mg/cm2)', 'Result': 'Result', 'Component': 'Component', 'Component2': 'Sub Component', 'Side': 'Wall', 'Room': 'Room', 'Calibration Reading': 'Calibration Reading', 'Substrate': 'Substrate', 'Date': 'Date', 'Time': 'Time'})
 
 
 # fill N/A values be carefull they won't cause an error with a later operation like sorting
@@ -522,9 +539,10 @@ calibration readings (reading number, reading value) - get from calibration df
 
 """
 field_df = convert_csv_to_df(file_path)
-clean_df = make_header_row(field_df, 5)
-clean_df = remove_first_rows(field_df, 6)
+# clean_df = make_header_row(field_df, 5)
+# clean_df = remove_first_rows(field_df, 6)
 calibration_total = total_num_calibration_tests(clean_df)
+
 
 if calibration_total == 0:
     warning_message("No calibration tests were found in the file. You may want to check your spelling. The program will continue now..")
