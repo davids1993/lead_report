@@ -22,19 +22,19 @@ def input_window():
     while True:
         event, values = window.read()
         if event == sg.WIN_CLOSED or event == 'Cancel': # if user closes window or clicks cancel
-            break
-        window.close()
+            window.close()
+            sys.exit()
         return values
     
     
-def error_message(message):
-    sg.popup_error(message)
+def error_message(message, title='Error'):
+    sg.popup_error(message, title=title)
     sys.exit("Error: " + message)
     
     
 
-def warning_message(message):
-    sg.popup(message)
+def warning_message(message, title='Warning'):
+    sg.popup(message, title=title)
     
     
 

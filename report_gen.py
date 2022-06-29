@@ -88,7 +88,7 @@ def remove_calibration_readings(df):
 
 # a summary df filtered to only show results that equal positive in the results column
 def summary_df_filtered_to_positive(df):
-    df = df[df['Result'] == 'Positive']
+    df = df[(df['Result'] == 'Positive') | (df['Result'] == 'Inconclusive')]
     return df
 
 # get calibration by filtering the df to show results that equal true in the calibration reading column
@@ -272,6 +272,17 @@ def is_positive_readings(df):
         return True
     else:
         return False
+    
+# summary of df filtered to inconclusive readings
+def summary_df_filtered_to_inconclusive(df):
+    df = df[df['Result'] == 'Inconclusive']
+    return df
+    
+
+# number of inconclusive readings - get number of rows in df where result = inconclusive
+def num_inconclusive_readings(df):
+    df = summary_df_filtered_to_inconclusive(df)
+    return len(df.index)
     
 
 
@@ -569,15 +580,17 @@ start_date = get_testing_start_date(clean_df)
 end_date = get_testing_end_date(clean_df)
 readings_total = total_number_of_readings(clean_df)
 positive_readings = num_positive_readings(clean_df)
+inconlusive_readings = num_inconclusive_readings(clean_df)
 instrument_detail = instrument_details(field_df)
 results = is_positive_readings(clean_df)
+
 
 if results == True:
     results = 'Positive'
 else:
     results = 'Negative'
 
-fields = {'start_date': start_date, 'end_date': end_date, 'calibration_total': calibration_total, 'readings_total': readings_total, 'positive_readings': positive_readings, 'instrument_detail': instrument_detail, 'results': results, 'calibrations': calibration_df_dict, 'report_date': date.today().strftime('%m/%d/%Y')}
+fields = {'start_date': start_date, 'end_date': end_date, 'calibration_total': calibration_total, 'readings_total': readings_total, 'positive_readings': positive_readings, 'inconlusive_readings': inconlusive_readings, 'instrument_detail': instrument_detail, 'results': results, 'calibrations': calibration_df_dict, 'report_date': date.today().strftime('%m/%d/%Y')}
 
 dialog_fields = ['location name', 'location address', 'report number']
 
@@ -624,7 +637,7 @@ if Path.is_file(additional_pdf_files[0]):
 
     merge_pdfs(additional_pdf_files, f'{save_location}/Merged-report.pdf')
     
-sg.popup_ok('Report generated!', background_color='light grey', text_color='black')
+sg.popup_ok('Your Report has sucessfuly been generated!', background_color='light grey', text_color='black', no_titlebar=True, auto_close=True, auto_close_duration=2, title='Success!')
     
     
     

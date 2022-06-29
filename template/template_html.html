@@ -65,7 +65,7 @@
         side A is always the same wall as the apartment entry, with sides B, C, and D following in a clockwise 
         direction. The sides are noted in the data charts. 
         A total of {{readings_total}} readings, including {{calibration_total}} calibration checks were taken on painted or varnished 
-        components. The results indicate that {{positive_readings}} positive readings were found during this inspection. 
+        components. The results indicate that {{positive_readings}} positive readings and {{inconlusive_readings}} inconclusive readings were found during this inspection. 
         Please call us with any questions or concerns that you may have regarding this report or any 
         other lead-based paint issues.</p>
 
@@ -215,7 +215,7 @@
 
     Inspection Date: {{start_date[0]}} <br>
     Report Date: {{report_date}} <br>
-    Location: {{location_name}} <br>
+    Location: {{location_address}} <br>
     Abatement Level: 0.5 mg/cm2 <br>
     Report Number: {{report_number}} <br>
     Total Readings: {{readings_total}} <br>
@@ -303,7 +303,7 @@
 
     Inspection Date: {{start_date[0]}} <br>
     Report Date: {{report_date}} <br>
-    Location: {{location_name}} <br>
+    Location: {{location_address}} <br>
     Abatement Level: 0.5 mg/cm2 <br>
     Report Number: {{report_number}} <br>
     Total Readings: {{readings_total}} <br>
@@ -352,7 +352,7 @@
 
     Inspection Date: {{start_date[0]}} <br>
     Report Date: {{report_date}} <br>
-    Location: {{location_name}} <br>
+    Location: {{location_address}} <br>
     Abatement Level: 0.5 mg/cm2 <br>
     Report Number: {{report_number}} <br>
     Total Readings: {{readings_total}} <br>
@@ -364,7 +364,9 @@
     <table class="report-table" repeat="1">
         <tr class="heading-row">
         {% for item in headings %}
+            {% if item != 'Room' %}
             <th>{{item}}</th>
+            {% endif %}
         {% endfor %}
         </tr>
 
@@ -376,7 +378,7 @@
                 <td colspan="{{headings|length}}">{{rm.room}}</td>
             </tr>
         {% endif %}
-        {% if dict['Result'] == 'Positive' %}
+        {% if dict['Result'] == 'Positive' or dict['Result'] == 'Inconclusive'%}
             <tr class="positive-table-row">
             {% for key, value in dict.items() %}
                 {% if key != 'Room' %}
