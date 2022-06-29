@@ -17,24 +17,25 @@ def input_window():
 
 
 
-    window = sg.Window('Lead Report', layout, background_color='dark grey')
+    window = sg.Window('Lead Report', layout, background_color='light grey', icon='icon.ico')
 
     while True:
         event, values = window.read()
         if event == sg.WIN_CLOSED or event == 'Cancel': # if user closes window or clicks cancel
             window.close()
             sys.exit()
+        window.close()
         return values
     
     
 def error_message(message, title='Error'):
-    sg.popup_error(message, title=title)
+    sg.popup_error(message, title=title, icon='icon.ico', background_color='light grey', text_color='red')
     sys.exit("Error: " + message)
     
     
 
 def warning_message(message, title='Warning'):
-    sg.popup(message, title=title)
+    sg.popup(message, title=title, icon='icon.ico', background_color='light grey', text_color='red')
     
     
 
