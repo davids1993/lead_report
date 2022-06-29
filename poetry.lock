@@ -279,6 +279,7 @@ uritools = ">=3.0.1"
 async_http = ["aiohttp (>=3.8.0,<3.9.0)"]
 
 [[package]]
+<<<<<<< HEAD
 name = "pypdf2"
 version = "2.2.0"
 description = "A pure-python PDF library capable of splitting, merging, cropping, and transforming PDF files"
@@ -290,6 +291,8 @@ python-versions = ">=3.6"
 typing-extensions = {version = "*", markers = "python_version < \"3.10\""}
 
 [[package]]
+=======
+>>>>>>> c58cb9690478ca0a68aaff0380634d79b61d3981
 name = "pypdf3"
 version = "1.0.6"
 description = "Pure Python PDF toolkit"
@@ -301,6 +304,7 @@ python-versions = "*"
 tqdm = "*"
 
 [[package]]
+<<<<<<< HEAD
 name = "pysimplegui"
 version = "4.60.1"
 description = "Python GUIs for Humans. Launched in 2018. It's 2022 & PySimpleGUI is an ACTIVE & supported project. Super-simple to create custom GUI's. 325+ Demo programs & Cookbook for rapid start. Extensive documentation. Main docs at www.PySimpleGUI.org. Fun & your success are the focus. Examples using Machine Learning (GUI, OpenCV Integration), Rainmeter Style Desktop Widgets, Matplotlib + Pyplot, PIL support, add GUI to command line scripts, PDF & Image Viewers. Great for beginners & advanced GUI programmers."
@@ -309,6 +313,8 @@ optional = false
 python-versions = "*"
 
 [[package]]
+=======
+>>>>>>> c58cb9690478ca0a68aaff0380634d79b61d3981
 name = "python-bidi"
 version = "0.4.2"
 description = "Pure python implementation of the BiDi layout algorithm"
@@ -391,6 +397,7 @@ rlpycairo = ["rlPyCairo (>=0.0.5)"]
 
 [[package]]
 name = "requests"
+<<<<<<< HEAD
 version = "2.28.0"
 description = "Python HTTP for Humans."
 category = "main"
@@ -405,6 +412,22 @@ urllib3 = ">=1.21.1,<1.27"
 
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
+=======
+version = "2.27.1"
+description = "Python HTTP for Humans."
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
+
+[package.dependencies]
+certifi = ">=2017.4.17"
+charset-normalizer = {version = ">=2.0.0,<2.1.0", markers = "python_version >= \"3\""}
+idna = {version = ">=2.5,<4", markers = "python_version >= \"3\""}
+urllib3 = ">=1.21.1,<1.27"
+
+[package.extras]
+socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
+>>>>>>> c58cb9690478ca0a68aaff0380634d79b61d3981
 use_chardet_on_py3 = ["chardet (>=3.0.2,<5)"]
 
 [[package]]
@@ -462,6 +485,7 @@ slack = ["slack-sdk"]
 telegram = ["requests"]
 
 [[package]]
+<<<<<<< HEAD
 name = "typing-extensions"
 version = "4.2.0"
 description = "Backported and Experimental Type Hints for Python 3.7+"
@@ -470,6 +494,8 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+=======
+>>>>>>> c58cb9690478ca0a68aaff0380634d79b61d3981
 name = "tzdata"
 version = "2022.1"
 description = "Provider of IANA time zone data"
@@ -544,7 +570,11 @@ svglib = ">=1.2.1"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
+<<<<<<< HEAD
 content-hash = "4cc083281ba1ef29f172f0b0093e2efcf4f2755a80bd98e5c0b43cdb5d1a017f"
+=======
+content-hash = "94f13a18fb804265a0815dc5ef6628f9897a93778a6a1df418d215f18c2a973e"
+>>>>>>> c58cb9690478ca0a68aaff0380634d79b61d3981
 
 [metadata.files]
 arabic-reshaper = [
@@ -877,6 +907,7 @@ pyhanko-certvalidator = [
     {file = "pyhanko-certvalidator-0.19.5.tar.gz", hash = "sha256:770111bd9f1654e250b5f6c78d91346579c2ec1a1af4ba40a50467e6bc546840"},
     {file = "pyhanko_certvalidator-0.19.5-py3-none-any.whl", hash = "sha256:78f4450cb5a2094d543711fd8a7d4a97064c6061fce7321d5d8f905212040e41"},
 ]
+<<<<<<< HEAD
 pypdf2 = [
     {file = "PyPDF2-2.2.0-py3-none-any.whl", hash = "sha256:6167a965a2b44f6e763f0bb2028810898bace2caae5ddd5040a8b57e1c6aaa5a"},
     {file = "PyPDF2-2.2.0.tar.gz", hash = "sha256:12a289d7be1cac0b066b05854ebc40dfaaeea31244ec45ea02682e51deefb7e8"},
@@ -888,6 +919,11 @@ pysimplegui = [
     {file = "PySimpleGUI-4.60.1-py3-none-any.whl", hash = "sha256:c31c168deb1816d56811bfb4c881b3f4bcaca03b7d5f0ea7ada9772f397582a3"},
     {file = "PySimpleGUI-4.60.1.tar.gz", hash = "sha256:3ea18e3aaea515bdf40e7d73015d101d92abddf214b134ae7674e99c58b96598"},
 ]
+=======
+pypdf3 = [
+    {file = "PyPDF3-1.0.6.tar.gz", hash = "sha256:c946f3273419e37258e35e72273f49904ab15723d87a761c1115ef99799f8c5f"},
+]
+>>>>>>> c58cb9690478ca0a68aaff0380634d79b61d3981
 python-bidi = [
     {file = "python-bidi-0.4.2.tar.gz", hash = "sha256:5347f71e82b3e9976dc657f09ded2bfe39ba8d6777ca81a5b2c56c30121c496e"},
     {file = "python_bidi-0.4.2-py2.py3-none-any.whl", hash = "sha256:50eef6f6a0bbdd685f9e8c207f3c9050f5b578d0a46e37c76a9c4baea2cc2e13"},
@@ -981,8 +1017,13 @@ reportlab = [
     {file = "reportlab-3.6.10.tar.gz", hash = "sha256:bf8cba95a2d5cf731e8b74c92b4f07d79ef286a2a78b617300e37e51cf955cb2"},
 ]
 requests = [
+<<<<<<< HEAD
     {file = "requests-2.28.0-py3-none-any.whl", hash = "sha256:bc7861137fbce630f17b03d3ad02ad0bf978c844f3536d0edda6499dafce2b6f"},
     {file = "requests-2.28.0.tar.gz", hash = "sha256:d568723a7ebd25875d8d1eaf5dfa068cd2fc8194b2e483d7b1f7c81918dbec6b"},
+=======
+    {file = "requests-2.27.1-py2.py3-none-any.whl", hash = "sha256:f22fa1e554c9ddfd16e6e41ac79759e17be9e492b3587efa038054674760e72d"},
+    {file = "requests-2.27.1.tar.gz", hash = "sha256:68d7c56fd5a8999887728ef304a6d12edc7be74f1cfa47714fc8b414525c9a61"},
+>>>>>>> c58cb9690478ca0a68aaff0380634d79b61d3981
 ]
 six = [
     {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
@@ -999,10 +1040,13 @@ tqdm = [
     {file = "tqdm-4.64.0-py2.py3-none-any.whl", hash = "sha256:74a2cdefe14d11442cedf3ba4e21a3b84ff9a2dbdc6cfae2c34addb2a14a5ea6"},
     {file = "tqdm-4.64.0.tar.gz", hash = "sha256:40be55d30e200777a307a7585aee69e4eabb46b4ec6a4b4a5f2d9f11e7d5408d"},
 ]
+<<<<<<< HEAD
 typing-extensions = [
     {file = "typing_extensions-4.2.0-py3-none-any.whl", hash = "sha256:6657594ee297170d19f67d55c05852a874e7eb634f4f753dbd667855e07c1708"},
     {file = "typing_extensions-4.2.0.tar.gz", hash = "sha256:f1c24655a0da0d1b67f07e17a5e6b2a105894e6824b92096378bb3668ef02376"},
 ]
+=======
+>>>>>>> c58cb9690478ca0a68aaff0380634d79b61d3981
 tzdata = [
     {file = "tzdata-2022.1-py2.py3-none-any.whl", hash = "sha256:238e70234214138ed7b4e8a0fab0e5e13872edab3be586ab8198c407620e2ab9"},
     {file = "tzdata-2022.1.tar.gz", hash = "sha256:8b536a8ec63dc0751342b3984193a3118f8fca2afe25752bb9b7fffd398552d3"},
