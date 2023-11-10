@@ -83,7 +83,7 @@ def sort_df(df, columns_to_sort_by):
 
 # remove calibration readings from df
 def remove_calibration_readings(df):
-    df = df[df['Component'].str.upper() != 'CALIBRATION']
+    df = df[df['Structure'].str.upper() != 'CALIBRATION']
     return df
 
 # a summary df filtered to only show results that equal positive in the results column
@@ -93,7 +93,7 @@ def summary_df_filtered_to_positive(df):
 
 # get calibration by filtering the df to show results that equal true in the calibration reading column
 def get_calibration_readings(df):
-    df = df[df['Component'].str.upper() == 'CALIBRATION']
+    df = df[df['Structure'].str.upper() == 'CALIBRATION']
     return df
 
 def rename_columns(df, column_names):
@@ -117,9 +117,9 @@ def convert_nan_to_na(df):
 
 def add_result_column(df):
     conditions = [
-    (df['Concentration'] > 0.5) & (df['Component'].str.upper() != 'CALIBRATION'),
-    (df['Concentration'] <= 0.4) & (df['Component'].str.upper() != 'CALIBRATION'),
-    (df['Concentration'] == 0.5) & (df['Component'].str.upper() != 'CALIBRATION')
+    (df['Concentration'] > 0.5) & (df['Structure'].str.upper() != 'CALIBRATION'),
+    (df['Concentration'] <= 0.4) & (df['Structure'].str.upper() != 'CALIBRATION'),
+    (df['Concentration'] == 0.5) & (df['Structure'].str.upper() != 'CALIBRATION')
     ]
 
     
@@ -441,10 +441,10 @@ branding = values[6]
     
 
 
-
+##############################################FIX THIS
 
 columns_to_keep = ['Reading #', 'Concentration',
-       'Component', 'Component2', 'Substrate', 'Side', 'Room', 'Room Number', 'Calibration Reading', 'Notes', 'Date', 'Time']
+       'Calibration Reading', 'Date', 'Time', 'Room Choice', 'Structure', 'Member', 'Substrate', 'Wall', 'Location', 'Paint Color', 'Paint Condition', 'Notes']
 
 """
 DATA PROCESSING (PANDAS)
@@ -460,16 +460,15 @@ df = set_df_column_names(df, columns_to_keep)
 df['Concentration'] = df['Concentration'].astype(float)
 df = add_result_column(df)
 # merge room and room number columns then remove room number col
-missing_room_df = remove_calibration_readings(df)
-if missing_room_df['Room Number'].isnull().values.any():
-    warning_message("You are mising some or all numbers in your [Room Number] column. Program will continue..")
+# missing_room_df = remove_calibration_readings(df)
+# if missing_room_df['Room Number'].isnull().values.any():
+#     warning_message("You are mising some or all numbers in your [Room Number] column. Program will continue..")
     
 
 
-df['Room Number'] = df['Room Number'].fillna('')
-df['Room'] = df['Room'].fillna('N/A')
-df["Room"] = df['Room Number'].astype(str) +" "+ df["Room"].astype(str)
-df.drop('Room Number', axis=1, inplace=True)
+# df['Room Number'] = df['Room Number'].fillna('')
+# df["Room"] = df['Room Number'].astype(str) +" "+ df["Room"].astype(str)
+# df.drop('Room Number', axis=1, inplace=True)
 
 
 clean_df = df
@@ -478,7 +477,7 @@ clean_df = df
 
 
 # create a df with Notes and Room columns
-note_df = remove_all_but_columns(df, ['Room', 'Notes'])
+note_df = remove_all_but_columns(df, ['Room Choice', 'Notes'])
 
 # convert note df to a list of tuples
 note_data = df_to_list_of_tupples(note_df)
@@ -491,53 +490,61 @@ note_dict = list_of_tuples_to_dict(note_data)
 note_dict = dict_list_to_string(note_dict)
 
 
-
-
-
-
-
-
-
-df = change_column_order(df, ['Room', 'Reading #','Side', 'Component', 'Component2', 'Concentration', 'Substrate', 'Result', 'Calibration Reading'])
-df = df.rename(columns={'Reading #': 'Reading No.', 'Concentration': 'Lead (mg/cm2)', 'Result': 'Result', 'Component': 'Component', 'Component2': 'Sub Component', 'Side': 'Wall', 'Room': 'Room', 'Calibration Reading': 'Calibration Reading', 'Substrate': 'Substrate', 'Date': 'Date', 'Time': 'Time'})
-
-
 # fill N/A values be carefull they won't cause an error with a later operation like sorting
 # I want to be explicit about what I'm doing here with each column
-df['Reading No.'] = df['Reading No.'].fillna(0)
-df['Lead (mg/cm2)'] = df['Lead (mg/cm2)'].fillna('N/A')
-df['Result'] = df['Result'].fillna('N/A')
-df['Component'] = df['Component'].fillna('N/A')
-df['Sub Component'] = df['Sub Component'].fillna('N/A')
-df['Wall'] = df['Wall'].fillna('N/A')
-df['Calibration Reading'] = df['Calibration Reading'].fillna('N/A')
+df['Reading #'] = df['Reading #'].fillna(0)
+df['Room Choice'] = df['Room Choice'].fillna('N/A')
+df['Structure'] = df['Structure'].fillna('N/A')
+df['Member'] = df['Member'].fillna('N/A')
 df['Substrate'] = df['Substrate'].fillna('N/A')
+df['Wall'] = df['Wall'].fillna('N/A')
+df['Location'] = df['Location'].fillna('N/A')
+df['Paint Color'] = df['Paint Color'].fillna('N/A')
+df['Paint Condition'] = df['Paint Condition'].fillna('N/A')
+df['Concentration'] = df['Concentration'].fillna('N/A')
+df['Result'] = df['Result'].fillna('N/A')
+
+
+# df = change_column_order(df, ['Room', 'Reading #','Side', 'Component', 'Component2', 'Concentration', 'Substrate', 'Result', 'Calibration Reading'])
+df = change_column_order(df, ['Reading #', 'Result', 'Room Choice', 'Structure', 'Member', 'Substrate', 'Wall', 'Location', 'Paint Color', 'Paint Condition', 'Concentration'])
+# df = df.rename(columns={'Reading #': 'Reading No.', 'Concentration': 'Lead (mg/cm2)', 'Result': 'Result', 'Component': 'Component', 'Component2': 'Sub Component', 'Side': 'Wall', 'Room': 'Room', 'Calibration Reading': 'Calibration Reading', 'Substrate': 'Substrate', 'Date': 'Date', 'Time': 'Time'})
+df = df.rename(columns={
+ 'Reading #': 'Read #',
+ 'Room Choice': 'Room Choice',
+ 'Structure': 'Structure',
+ 'Member': 'Member',
+ 'Substrate': 'Substrate',
+ 'Wall': 'Wall',
+ 'Location': 'Location',
+ 'Paint Color': 'Color',
+ 'Paint Condition': 'Condition',
+ 'Concentration': 'Lead (mg/cm2)',
+ 'Result': 'Result'
+})
 
 
 
-
-
-report_df_columns = ['Room','Reading No.', 'Wall', 'Component', 'Sub Component', 'Substrate', 'Lead (mg/cm2)', 'Result']
+report_df_columns = ['Read #', 'Room Choice', 'Structure', 'Member', 'Substrate', 'Wall', 'Location', 'Color', 'Condition', 'Lead (mg/cm2)', 'Result']
 report_df = remove_all_but_columns(df, report_df_columns)
 report_df = remove_calibration_readings(report_df)
 report_df_dict = convert_df_to_dict(report_df)
 
 
-summary_df_columns = ['Room','Reading No.', 'Wall', 'Component', 'Sub Component', 'Substrate', 'Lead (mg/cm2)', 'Result']
+summary_df_columns = ['Read #', 'Room Choice', 'Structure', 'Member', 'Substrate', 'Wall', 'Location', 'Color', 'Condition', 'Lead (mg/cm2)', 'Result']
 summary_df = summary_df_filtered_to_positive(df)
 summary_df = remove_all_but_columns(summary_df, summary_df_columns)
 summary_df_dict = convert_df_to_dict(summary_df)
 
-calibration_df_columns = ['Reading No.', 'Lead (mg/cm2)']
+calibration_df_columns = ['Read #', 'Lead (mg/cm2)']
 calibration_df = get_calibration_readings(df)
 calibration_df = remove_all_but_columns(calibration_df, calibration_df_columns)
 calibration_df_dict = convert_df_to_dict(calibration_df)
 
 
-sequential_df_columns = ['Room','Reading No.', 'Wall', 'Component', 'Sub Component', 'Substrate', 'Lead (mg/cm2)', 'Result']
+sequential_df_columns = ['Read #', 'Room Choice', 'Structure', 'Member', 'Substrate', 'Wall', 'Location', 'Color', 'Condition', 'Lead (mg/cm2)', 'Result']
 sequential_df = df
-sequential_df['Reading No.'] = sequential_df['Reading No.'].astype(int)
-sequential_df = sort_df(sequential_df, ['Reading No.'])
+sequential_df['Read #'] = sequential_df['Read #'].astype(int)
+sequential_df = sort_df(sequential_df, ['Read #'])
 sequential_df = remove_all_but_columns(sequential_df, sequential_df_columns)
 sequential_df_dict = convert_df_to_dict(sequential_df)
 

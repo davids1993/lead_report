@@ -1,8 +1,8 @@
 p {
     font-family: 'Times New Roman', Times, serif;
     font-size: larger;
-    margin-left: 60px;
-    margin-right: 40px;
+    margin-left: 40px;
+    /* margin-right: 40px; */
 
 
 
@@ -51,7 +51,7 @@ ul {
 .heading {
 
     font-family: 'Times New Roman', Times, serif;
-    font-size: x-large;
+    font-size: large;
     text-align: center;
     color: hsl(0, 0%, 0%);
     margin: 20px;
@@ -62,7 +62,7 @@ ul {
 }
 
 .logo {
-    width: 150px;
+    width: 200px;
     height: auto;
     text-align: center;
 

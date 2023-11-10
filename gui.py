@@ -3,8 +3,8 @@ import sys
 
 
 def input_window():
-    layout = [  [sg.Text('Location Name:', size=(15, 1)), sg.InputText(),],
-                [sg.Text('Location Address', size=(15, 1)), sg.InputText()],
+    layout = [  [sg.Text('Client Name:', size=(15, 1)), sg.InputText(),],
+                [sg.Text('Client Address', size=(15, 1)), sg.InputText()],
                 [sg.Text('Report Number', size=(15, 1)), sg.InputText()],
                 [sg.Text('CSV Lead Report', size=(15, 1)), sg.Input(), sg.FileBrowse(file_types=(('CSV Files', '*.csv'),))],
                 [sg.Text("Additional PDF'S", size=(15, 1)), sg.Input(), sg.FilesBrowse(file_types=(('PDF', '*.pdf'),))],
