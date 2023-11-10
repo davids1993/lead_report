@@ -579,7 +579,7 @@ calibration_total = total_num_calibration_tests(clean_df)
 
 
 if calibration_total == 0:
-    warning_message("No calibration tests were found in the file. You may want to check your spelling. The program will continue now..")
+    warning_message("No calibration tests were found in the file. You may want to check your spelling. The program will continue..")
     
 
 without_calibration_df = remove_calibration_readings(clean_df)
@@ -644,7 +644,7 @@ if Path.is_file(additional_pdf_files[0]):
 
     merge_pdfs(additional_pdf_files, f'{save_location}/Merged-report.pdf')
     
-sg.popup_ok('Your Report has sucessfuly been generated!', background_color='light grey', text_color='black', no_titlebar=True, auto_close=True, auto_close_duration=2, title='Success!')
+sg.popup_ok('Your Report has sucessfuly been generated!', background_color='light grey', text_color='black', auto_close=True, auto_close_duration=2, title='Success!')
     
     
     
