@@ -1,171 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <!-- Content for Static Frame 'header_frame' -->
     {% if branding %}
-    <div id="header_content">Secure Environmental Group. </div>
-    {% endif %}
+    <div id="header_content">
+      <div id="header_address">
+        Lead Based Paint Inspection Report
+      </div>
 
-    {% if not branding %}
+      <div id="header_detail">
+        Inspection Date: {{start_date[0]}} <br />
+        Action Level: 0.5 mg/cm2. Total <br />
+        Readings: {{readings_total}} <br />
+        Unit Started: {{start_date[1]}} <br />
+        Unit Ended:{{end_date[1]}} <br />
+        Inspection Site: {{inspection_address}}, Unit {{unit_number}} <br />
+      </div>
+    </div>
+    {% endif %} {% if not branding %}
     <div id="header_content">Lead Report</div>
     {% endif %}
 
     <!-- Content for Static Frame 'footer_frame' -->
-    <div id="footer_content">Page <pdf:pagenumber /> </div>
+    <!-- <div id="footer_content">Page <pdf:pagenumber /> </div> -->
+    <div id="footer_content">
+      Secure Environmental Group 25 Commerce Drive, Suite 340, Cranford, NJ 07016
+    </div>
+    </div>
 
-    
-    {% if branding %}
-        <img class=logo src="logo/Logo 05.jpg" alt="">
-    {% endif %}
-    <h1 class="report">Lead-Based Paint Report</h1>
+    <!-- cover page -->
+    <div class="cover-sheet">
+      <div class="header">
+        <img src="logo/Logo 05.jpg" alt="logo" class="logo" />
+        <h1>Lead Based Paint Inspection Report</h1>
+      </div>
+      <div class="address">
+        Secure Environmental Group <br>
+        25 Commerce Drive <br>
+        Suite 340 <br>
+        Cranford, NJ 07016 <br>
+      </div>
+      <div class="report-details">
+        <p>
+          <strong>Inspection Site:</strong> {{inspection_address}}, Unit
+          {{unit_number}}
+        </p>
+        <p>
+          <strong>Inspection Date:</strong> {{start_date[0]}} - {{end_date[0]}}
+        </p>
+        <p><strong>Instrument Type:</strong> {{instrument_detail}}</p>
+        <p><strong>Action Level:</strong> 0.5 mg/cm<sup>2</sup></p>
+        <p><strong>Inspected By:</strong> {{inspector_name}}</p>
+        <p><strong>Inspector License Number:</strong> {{inspector_license}}</p>
+        <p><strong>Total Readings:</strong> {{readings_total}}</p>
+        <p><strong>Positive Readings:</strong> {{positive_readings}}</p>
+      </div>
+    </div>
 
 
-    <h3>INSPECTION FOR:</h3>
-    <p>{{location_name}}</p>
 
-    <h3>PERFORMED AT:</h3>
-    <p>{{location_address}}</p>
-
-    <h3>INSPECTION DATE:</h3>
-    <p>{{start_date[0]}}</p>
-
-    <h3>REPORT NUMBER:</h3>
-    <p>{{report_number}}</p>
-
-    <h3>INSTRUMENT TYPE:</h3>
-    <p>{{instrument_detail}}</p>
-
-    <h3>ACTION LEVEL:</h3>
-    <p>0.5 mg/cm2</p>
-
-    <h3>REPORT RESULTS:</h3>
-    <p>{{results}}</p>
+    <pdf:nexttemplate name="report" />
+    <pdf:nextpage />
 
 
-    <pdf:nextpage>
-    {% if branding %}
-    <p class="heading"> <img class=logo src="logo/Logo 05.jpg" alt=""> <br>
-    <b>929-324-0487 | info@secureenvgroup.com | 25 Commerce Drive, Suite 340, Cranford, NJ 07016</b>  <br>
-    {% endif %}
 
-    {% if not branding %}
-    <p class="heading">
-   {% endif %}
-
-    SEQUENTAIL READINGS REPORT OF LEAD PAINT INSPECTION FOR: {{location_name}} <br>
-
-    Inspection Date: {{start_date[0]}} <br>
-    Report Date: {{report_date}} <br>
-    Location: {{location_address}} <br>
-    Abatement Level: 0.5 mg/cm2 <br>
-    Report Number: {{report_number}} <br>
-    Total Readings: {{readings_total}} <br>
-    Positive Readings: {{positive_readings}} <br>
-    Job Start: {{start_date[1]}} <br>
-    Job End: {{end_date[1]}} <br>
-</p>
-    <h1></h1>
+    <!-- <pdf:nextpage> -->
+    <!-- Report table -->
     <table class="report-table" repeat="1">
-        <tr class="heading-row">
+      <tr class="heading-row">
         {% for item in headings %}
-            <th>{{item}}</th>
+        <th>{{ item }}</th>
         {% endfor %}
-        </tr>
-    {% for dict in sequential_df %}
-       {% if dict['Result'] == 'Positive' or dict['Result'] == 'Inconclusive' %}
-            <tr class="positive-table-row">
-        {% for key, value in dict.items() %}
-                <td>{{value}}</td>
-        {% endfor %}
-        {% else %}
-            <tr class="negative-table-row">
-        {% for key, value in dict.items() %}
-                <td>{{value}}</td>
-        {% endfor %}
-        </tr>
-        {% endif %}
-    {% endfor %}
+      </tr>
+      {% for dict in sequential_df %} {% set row_class = 'color1' if loop.index
+      is odd else 'color2' %} {% if dict['Result'] == 'Positive' or
+      dict['Result'] == 'Inconclusive' %}
+      <tr class="{{ row_class }} positive-table-row">
+        {% elif dict['Structure'] == 'Calibration' %}
+      </tr>
 
+      <tr class="{{ row_class }} z">
+        {% else %}
+      </tr>
+
+      <tr class="{{ row_class }} negative-table-row">
+        {% endif %} {% for key, value in dict.items() %} {% if
+        (dict['Structure'] == 'Window' or dict['Structure'] == 'Door') and
+        (dict['Result'] == 'Positive' or dict['Result'] == 'Inconclusive') %}
+        <td>
+          <div class="y">{{ value }}</div>
+        </td>
+        {% else %}
+        <td>{{ value }}</td>
+        {% endif %} {% endfor %}
+      </tr>
+      {% endfor %}
     </table>
 
-    
+    <br />
+    <br />
+    <h2 class="eor">------ END OF READINGS ------</h2>
 
+    <!-- positive reading table -->
+    <!-- Report table -->
     <pdf:nextpage>
-    {% if branding %}
-        <p class="heading"> <img class=logo src="logo/Logo 05.jpg" alt=""> <br>
-    <b>929-324-0487 | info@secureenvgroup.com | 25 Commerce Drive, Suite 340, Cranford, NJ 07016</b>  <br>
-    {% endif %}
-
-    {% if not branding %}
-    <p class="heading">
-   {% endif %}
-
-    POSITIVE RESULTS SUMMARY OF LEAD PAINT INSPECTION FOR: {{location_name}} <br>
-
-    Inspection Date: {{start_date[0]}} <br>
-    Report Date: {{report_date}} <br>
-    Location: {{location_address}} <br>
-    Abatement Level: 0.5 mg/cm2 <br>
-    Report Number: {{report_number}} <br>
-    Total Readings: {{readings_total}} <br>
-    Positive Readings: {{positive_readings}} <br>
-    Job Start: {{start_date[1]}} <br>
-    Job End: {{end_date[1]}} <br>
-</p>
+    <h3 id="positive_heading">Positive Readings Summary</h3>
 
     <table class="report-table" repeat="1">
-        <tr class="heading-row">
+      <tr class="heading-row">
         {% for item in headings %}
-            {% if item != 'Room' %}
-            <th>{{item}}</th>
-            {% endif %}
+        <th>{{ item }}</th>
         {% endfor %}
-        </tr>
+      </tr>
 
-    {% set rm = namespace(room='None') %}
-    {% for dict in summary_df %}
-        {% if dict['Room'] != rm.room %}
-            {% set rm.room = dict['Room'] %}
-            <tr class="room-row">
-                <td colspan="{{headings|length}}">{{rm.room}}</td>
-            </tr>
-        {% endif %}
-        {% if dict['Result'] == 'Positive' or dict['Result'] == 'Inconclusive'%}
-            <tr class="positive-table-row">
-            {% for key, value in dict.items() %}
-                {% if key != 'Room' %}
-                    <td>{{value}}</td>
-                {% endif %}
-            {% endfor %}
-            </tr>
+      {% for dict in summary_df %} {% set row_class = 'color1' if loop.index is
+      odd else 'color2' %}
+      <tr class="{{ row_class }} positive-table-row">
+        {% for key, value in dict.items() %} {% if (dict['Structure'] ==
+        'Window' or dict['Structure'] == 'Door') %}
+        <td>
+          <div class="y">{{ value }}</div>
+        </td>
         {% else %}
-            <tr class="negative-table-row">
-            {% for _, value in dict.items() %}
-                <td>{{value}}</td>
-            {% endfor %}
-            </tr>
-        {% endif %}
-    {% endfor %}
-
-
+        <td>{{ value }}</td>
+        {% endif %} {% endfor %}
+      </tr>
+      {% endfor %}
     </table>
 
-    
-    <br>
-    <br>
-    <h2 class="eor">END OF READINGS</h2>
-
-
-
-
-</body>
+  </body>
 </html>

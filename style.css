@@ -1,44 +1,3 @@
-p {
-    font-family: 'Times New Roman', Times, serif;
-    font-size: larger;
-    margin-left: 40px;
-    /* margin-right: 40px; */
-
-
-
-  }
-
-h1 {
-
-    font-family: 'Times New Roman', Times, serif;
-    font-size: xx-large;
-
-
-  }
-
-    h2 {
-        font-family: 'Times New Roman', Times, serif;
-        font-size: x-large;
-
-
-
-    }
-
-h3 {
-    font-family: 'Times New Roman', Times, serif;
-    font-size: larger;
-    margin-left: 40px;
-
-
-}
-
-ul {
-    font-family: 'Times New Roman', Times, serif;
-    font-size: large;
-    padding-left: 60px;
-
-}
-
 .eor {
     font-family: 'Times New Roman', Times, serif;
     font-size: x-large;
@@ -48,48 +7,101 @@ ul {
 
 }
 
-.heading {
-
-    font-family: 'Times New Roman', Times, serif;
-    font-size: large;
+#header_address {
+    font-size: 15px;
+    font-weight: bolder;
     text-align: center;
-    color: hsl(0, 0%, 0%);
-    margin: 20px;
-    padding: 20px;
-    border-style: solid;
-    border-color: #2f302f;
+    font-family: 'Arial', sans-serif;
+}
+
+#header_detail {
+    font-size: 10px;
+    text-align: center;
+    text-align: left;
+    font-family: 'Arial', sans-serif;
+}
+
+#footer_content {
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
 
 }
 
-.logo {
-    width: 200px;
-    height: auto;
-    text-align: center;
 
+#nextColumn {
+    margin-left: 500px;
 }
-
 
 .report{
     text-align: center;
 }
 
-
-
-@page {
-    size: a4 portrait;
-    @frame header_frame {           /* Static Frame */
-        -pdf-frame-content: header_content;
-        left: 50pt; width: 512pt; top: 50pt; height: 40pt;
-    }
-    @frame content_frame {          /* Content Frame */
-        left: 50pt; width: 512pt; top: 90pt; height: 632pt;
-    }
-    @frame footer_frame {           /* Another static Frame */
-        -pdf-frame-content: footer_content;
-        left: 50pt; width: 512pt; top: 772pt; height: 20pt;
+@page cover { 
+    size: letter landscape;
+    @frame content_frame {         
+        left: 100pt; width: 600pt; top: 110pt; height: 430pt; 
     }
 }
 
+@page report {
+    size: letter landscape;
+    @frame header_frame {         
+        -pdf-frame-content: header_content;
+        left: 100pt; width: 600pt; top: 10pt; height: 100pt;
+    }
+    @frame content_frame {         
+        left: 100pt; width: 600pt; top: 110pt; height: 430pt; 
+    }
+    @frame footer_frame {           
+        -pdf-frame-content: footer_content;
+        left: 100pt; width: 600pt; top: 580pt; height: 40pt; 
+    }
+}
+
+.cover-sheet {
+    max-width: 400px; /* Adjust width as needed */
+    margin: 20px auto;
+    padding: 3px;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .cover-sheet .header {
+    text-align: left;
+    margin-bottom: 20px;
+  }
+
+  .cover-sheet .address {
+    text-align: left;
+    margin-left: 50px;
+    font-size: 14px;
+  }
+  
+  .cover-sheet .logo {
+    width: auto; /* Adjust as necessary */
+    height: 100px;
+    text-align: left;
+  }
+  
+  .cover-sheet h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .cover-sheet .report-details p {
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+  
+  .cover-sheet .report-details strong {
+    font-weight: bold;
+  }
+  
+  .cover-sheet sup {
+    font-size: smaller;
+  }
+  
 
 
 .tables tr td{
@@ -122,39 +134,49 @@ ul {
 }
 
 
-.negative-table-row{
+
+.color2 {
+    /* light grey */
+    color: blue;
+    background-color: #CCCCCC;
+    padding : 2px 3px 2px 3px;
+    border-top: .5px solid;
+    border-color: #CCCCCC;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.color1 {
+    /* white */
+    color: blue;
     background-color: #ffffff;
     padding : 2px 3px 2px 3px;
     border-top: .5px solid;
-    border-color: #cdcaca;
+    border-color: #CCCCCC;
     text-align: center;
     white-space: nowrap;
-
 }
+
+/* this is for calibration-row. There is some bug with the pdf render that won't work if I name it calibration-row. not sure why. */
+.z{
+    color: black;
+}
+
+.y {
+    background-color: yellow;
+    /* padding: px; Adjust as needed */
+    display: inline-block; /* Or block, depending on layout */
+    margin: auto; /* Centers the content if the cell is larger */
+}
+
+
 
 .positive-table-row{
-    background-color: #ece1e1;
-    padding : 2px 3px 2px 3px;
-    border-top: .5px solid #000000;
-    border-color: #7a7878;
-    text-align: center;
-    white-space: nowrap;
+    /* font color */
+    color: #f51111;
+
 
 }
 
 
-.notes-row{
-    background-color: #ffffff;
-    padding : 4px 3px 4px 3px;
-    text-align: left;
-
-}
-
-.room-row{
-    padding : 4px 3px 4px 3px;
-    text-align: left;
-    font-weight: bold;
-    border-top : 2px solid #7a7878;
-
-}
 

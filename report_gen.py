@@ -124,7 +124,7 @@ def add_result_column(df):
 
     
     values = ['Positive', 'Negative', 'Inconclusive']
-    df['Result'] = np.select(conditions, values, default='N/A')
+    df['Result'] = np.select(conditions, values, default='--')
     return df
 
 
@@ -418,17 +418,18 @@ def select_multiple_pdf_files():
 
 
 values = input_window()
-location_name = values[0]
-location_address = values[1]
-report_number = values[2]
-
-csv_lead_file = values[3]
+client_name = values[0]
+inspection_address = values[1]
+unit_number = values[2]
+inspector_name = values[3]
+inspector_license = values[4]
+csv_lead_file = values[5]
 csv_lead_file = Path(csv_lead_file)
-additional_pdf_files = values[4].split(';')
+additional_pdf_files = values[6].split(';')
 additional_pdf_files = [Path(file) for file in additional_pdf_files]
-save_location = values[5]
+save_location = values[7]
 save_location = Path(save_location)
-branding = values[6]
+branding = values[8]
 
 
 
@@ -493,16 +494,16 @@ note_dict = dict_list_to_string(note_dict)
 # fill N/A values be carefull they won't cause an error with a later operation like sorting
 # I want to be explicit about what I'm doing here with each column
 df['Reading #'] = df['Reading #'].fillna(0)
-df['Room Choice'] = df['Room Choice'].fillna('N/A')
-df['Structure'] = df['Structure'].fillna('N/A')
-df['Member'] = df['Member'].fillna('N/A')
-df['Substrate'] = df['Substrate'].fillna('N/A')
-df['Wall'] = df['Wall'].fillna('N/A')
-df['Location'] = df['Location'].fillna('N/A')
-df['Paint Color'] = df['Paint Color'].fillna('N/A')
-df['Paint Condition'] = df['Paint Condition'].fillna('N/A')
-df['Concentration'] = df['Concentration'].fillna('N/A')
-df['Result'] = df['Result'].fillna('N/A')
+df['Room Choice'] = df['Room Choice'].fillna('--')
+df['Structure'] = df['Structure'].fillna('--')
+df['Member'] = df['Member'].fillna('--')
+df['Substrate'] = df['Substrate'].fillna('--')
+df['Wall'] = df['Wall'].fillna('--')
+df['Location'] = df['Location'].fillna('--')
+df['Paint Color'] = df['Paint Color'].fillna('--')
+df['Paint Condition'] = df['Paint Condition'].fillna('--')
+df['Concentration'] = df['Concentration'].fillna('--')
+df['Result'] = df['Result'].fillna('--')
 
 
 # df = change_column_order(df, ['Room', 'Reading #','Side', 'Component', 'Component2', 'Concentration', 'Substrate', 'Result', 'Calibration Reading'])
@@ -599,10 +600,10 @@ else:
 
 fields = {'start_date': start_date, 'end_date': end_date, 'calibration_total': calibration_total, 'readings_total': readings_total, 'positive_readings': positive_readings, 'inconlusive_readings': inconlusive_readings, 'instrument_detail': instrument_detail, 'results': results, 'calibrations': calibration_df_dict, 'report_date': date.today().strftime('%m/%d/%Y')}
 
-dialog_fields = ['location name', 'location address', 'report number']
+# dialog_fields = ['location name', 'inspection address', 'report number']
 
 
-user_fields = {'location_name': location_name, 'location_address': location_address, 'report_number': report_number}
+user_fields = {'client_name': client_name, 'inspection_address': inspection_address, 'unit_number': unit_number, 'inspector_name': inspector_name, 'inspector_license': inspector_license}
 
 tables = {'summary_df': summary_df_dict, 'results_df': report_df_dict, 'sequential_df': sequential_df_dict, 'headings': report_df_dict[0].keys(), 'notes': note_dict, 'branding': branding}
 
@@ -617,16 +618,15 @@ RENDERING HTML (jinja2)
 template_dir = Path("./template")
 template = set_up_jinja2_env('template_html.html', template_dir=template_dir)
 rendered = template.render(**all_fields)
-# file_name = 'rendered.html'
-# save_location = save_location
-# save_location_rendered = f'{save_location}\\{file_name}'
-# write_html_to_file([rendered, report_df_html, summary_df_html, calibration_df_html], save_location)
+
+# write html to file
+write_html_to_file([rendered], f'{save_location}/lead-report.html')
 
 merged = merge_html_objects([rendered])
 
 from html2pdf import convert_html_to_pdf
 
-location = Path(f"{save_location}/lead-report.pdf")
+location = Path(f"{save_location}/{inspection_address}, {unit_number} - XRF Inspection Report.pdf")
 
 
 convert_html_to_pdf(merged, location)
@@ -635,14 +635,25 @@ convert_html_to_pdf(merged, location)
 # ask user if they want to merge PDF's
 # additional = prompt_yes_no('Do you want to add additional PDFs to the report?')
 
+#path to generated report pdf file
+report_file = file_path_to_windows_friendly(location)
+
+#add additional pdf files to list
 if Path.is_file(additional_pdf_files[0]):
-    report_file = file_path_to_windows_friendly(location)
-
     additional_pdf_files.insert(0, report_file)
+else:
+    additional_pdf_files = [report_file]
+    
+#add report cover
+additional_pdf_files.insert(0, Path('./additional_pdfs/cover.pdf'))
 
-    from html2pdf import merge_pdfs
+#add final page
+additional_pdf_files.append(Path('./additional_pdfs/license.pdf'))
 
-    merge_pdfs(additional_pdf_files, f'{save_location}/Merged-report.pdf')
+from html2pdf import merge_pdfs
+
+merge_pdfs(additional_pdf_files, f"{save_location}/{inspection_address}, {unit_number} - XRF Inspection Report.pdf")
+
     
 sg.popup_ok('Your Report has sucessfuly been generated!', background_color='light grey', text_color='black', auto_close=True, auto_close_duration=2, title='Success!')
     

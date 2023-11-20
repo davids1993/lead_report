@@ -4,8 +4,10 @@ import sys
 
 def input_window():
     layout = [  [sg.Text('Client Name:', size=(15, 1)), sg.InputText(),],
-                [sg.Text('Client Address', size=(15, 1)), sg.InputText()],
-                [sg.Text('Report Number', size=(15, 1)), sg.InputText()],
+                [sg.Text('Inspection Addr.', size=(15, 1)), sg.InputText()],
+                [sg.Text('Unit Number', size=(15, 1)), sg.InputText()],
+                [sg.Text('Inspector Name', size=(15, 1)), sg.InputText()],
+                [sg.Text('Inspector License', size=(15, 1)), sg.InputText()],
                 [sg.Text('CSV Lead Report', size=(15, 1)), sg.Input(), sg.FileBrowse(file_types=(('CSV Files', '*.csv'),))],
                 [sg.Text("Additional PDF'S", size=(15, 1)), sg.Input(), sg.FilesBrowse(file_types=(('PDF', '*.pdf'),))],
                 [sg.Text('Save Folder', size=(15, 1)), sg.InputText(), sg.FolderBrowse()],
