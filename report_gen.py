@@ -9,6 +9,7 @@ from gui import input_window, error_message, warning_message
 import PySimpleGUI as sg
 from datetime import date
 import numpy as np
+import sys
 
 
 
@@ -258,7 +259,7 @@ def num_positive_readings(df):
 # instrument type - get from first 5 rows of initial df / uncleaned df
 def instrument_details(df):
     instrument_type = df.iloc[0:5]
-    name = instrument_type.iloc[0,1]
+    name = "Viken " + instrument_type.iloc[0,1]
     model = instrument_type.iloc[1,1]
     type = instrument_type.iloc[2,1]
     serial = instrument_type.iloc[3,1]
@@ -332,6 +333,8 @@ USER INPUT FUNCTIONS
             
 # take a file path and make it windows friendly using pathlib
 def file_path_to_windows_friendly(file_path):
+    #remove new line character
+    file_path = str(file_path).replace('\n', '')
     file_path = pathlib.Path(file_path)
     return file_path
 
@@ -418,18 +421,21 @@ def select_multiple_pdf_files():
 
 
 values = input_window()
-client_name = values[0]
-inspection_address = values[1]
-unit_number = values[2]
-inspector_name = values[3]
-inspector_license = values[4]
-csv_lead_file = values[5]
-csv_lead_file = Path(csv_lead_file)
-additional_pdf_files = values[6].split(';')
-additional_pdf_files = [Path(file) for file in additional_pdf_files]
-save_location = values[7]
-save_location = Path(save_location)
-branding = values[8]
+if values is not None:
+    client_name = values[0]
+    inspection_address = values[1]
+    unit_number = values[2]
+    inspector_name = values[3]
+    inspector_license = values[4]
+    csv_lead_file = values[5]
+    csv_lead_file = Path(csv_lead_file)
+    additional_pdf_files = values[6].split(';')
+    additional_pdf_files = [Path(file) for file in additional_pdf_files]
+    save_location = values[7]
+    save_location = Path(save_location)
+    branding = values[8]
+else:
+    sys.exit("User cancelled operation")
 
 
 
@@ -629,6 +635,7 @@ from html2pdf import convert_html_to_pdf
 location = Path(f"{save_location}/{inspection_address}, {unit_number} - XRF Inspection Report.pdf")
 
 
+
 convert_html_to_pdf(merged, location)
 
 
@@ -637,6 +644,7 @@ convert_html_to_pdf(merged, location)
 
 #path to generated report pdf file
 report_file = file_path_to_windows_friendly(location)
+
 
 #add additional pdf files to list
 if Path.is_file(additional_pdf_files[0]):
