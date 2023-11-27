@@ -429,7 +429,7 @@ if values is not None:
     inspector_license = values[4]
     csv_lead_file = values[5]
     csv_lead_file = Path(csv_lead_file)
-    additional_pdf_files = values[6].split(';')
+    additional_pdf_files = values['PDF_PATHS'].split(';')
     additional_pdf_files = [Path(file) for file in additional_pdf_files]
     save_location = values[7]
     save_location = Path(save_location)
