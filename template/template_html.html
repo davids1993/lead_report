@@ -80,22 +80,7 @@
         <th>{{ item }}</th>
         {% endfor %}
       </tr>
-      {% set highlight_structures = [
-         'door',
-         'door jamb',
-         'door frame',
-         'right casing',
-         'right jamb',
-         'left casing',
-         'left jamb',
-         'sill',
-         'closet door',
-         'closet door jamb',
-         'closet door frame',
-         'apt door frame',
-         'apt door',
-        ] 
-      %}
+
       {% for dict in sequential_df %} {% set row_class = 'color1' if loop.index
       is odd else 'color2' %} {% if dict['Result'] == 'Positive' or
       dict['Result'] == 'Inconclusive' %}

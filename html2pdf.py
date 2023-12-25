@@ -1,7 +1,6 @@
 import PyPDF2
 from xhtml2pdf import pisa
 from PyPDF2 import PdfMerger
-from pathlib import Path
 
 
 # use xhtml2pdf to convert html to pdf 
@@ -11,12 +10,10 @@ from pathlib import Path
 # include project info in the header
 
 # merge multiple pdfs into one
-def merge_pdfs(pdf_list, output, delete_file_location=False):
+def merge_pdfs(pdf_list, output):
     merger = PyPDF2.PdfMerger()
     for pdf in pdf_list:
         merger.append(pdf)
-    if delete_file_location:
-        Path.unlink(delete_file_location)
         
     merger.write(output)
     merger.close()

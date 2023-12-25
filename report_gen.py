@@ -10,30 +10,12 @@ import PySimpleGUI as sg
 from datetime import date
 import numpy as np
 import sys
+import json
 
 
 
 p = pathlib.PurePath(__file__).parent
 chdir(p)
-
-
-
-
-"""
-TODO:
-
-# calibration number not going into template. - DONE spelling mistake
-
-# change detailed report and summary report sort order to be in the order of the csv don't sort - DONE
-
-# Add numbers to the suammry and detailed reports - DONE
-
-# do some basic error handling
-    - missing values in columns cause errors
-    - test with many missing values, like cell, or rows
-    - check inputs for errors. 
-        validate csv
-"""
 
 
 """
@@ -106,15 +88,7 @@ def convert_nan_to_na(df):
     df = df.fillna('N/A')
     return df
 
-# add column to df with reading results - positive, negative or inconclusive
-# this is calculated based on the value of the Lead (mg/cm2) column.
-# if the valu is greater than 0.5 mg/cm2, the result is positive
-# if the value is less than 0.5 mg/cm2, the result is negative
-# if the value is 0.5 mg/cm2, the result is inconclusive
-# def add_result_column(df):
-#     df['Result'] = df['Concentration'].apply(lambda x: 'Positive' if x > 0.5 else 'Negative' if x <= 0.4 else 'Inconclusive' if x == 0.5 else 'N/A')
-#     df['Result'] = df['Component'].apply(lambda x: 'N/A' if x == 'CALIBRATION' else df['Result'])
-#     return df
+
 
 def add_result_column(df):
     conditions = [
@@ -127,8 +101,6 @@ def add_result_column(df):
     values = ['Positive', 'Negative', 'Inconclusive']
     df['Result'] = np.select(conditions, values, default='--')
     return df
-
-
 
 
 
@@ -180,10 +152,6 @@ def dict_list_to_string(dict):
         dict[key] = ', '.join(str(value) for value in value if value != 'nan')
     return dict
     
-
-
-
-
 
 
 # convert a df to a dict
@@ -338,117 +306,23 @@ def file_path_to_windows_friendly(file_path):
     file_path = pathlib.Path(file_path)
     return file_path
 
-    
-            
-            
-# create a tkinter dialog box to select a csv file
-def select_csv_file():
-    import tkinter as tk
-    from tkinter import filedialog
-    root = tk.Tk()
-    root.withdraw()
-    csv_file = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("csv files","*.csv"),("all files","*.*")))
-    csv_file = file_path_to_windows_friendly(csv_file)
-    return csv_file
-
-import tkinter as tk
-
-
-# fetch entries and add to dictionary
-def fetch(entries):
-    values = {}
-    for entry in entries:
-        field = entry[0]
-        text  = entry[1].get()
-        values[field] = text
-    return values
-
-
-def makeform(root, fields):
-    entries = []
-    for field in fields:
-        row = tk.Frame(root)
-        lab = tk.Label(row, width=15, text=field, anchor='w')
-        ent = tk.Entry(row)
-        row.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
-        lab.pack(side=tk.LEFT)
-        ent.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.X)
-        entries.append((field, ent))
-    return entries
-
-
-# dialog box to get user input
-def get_user_input(fields):
-    root = tk.Tk()
-    ents = makeform(root, fields)
-    root.bind('<Return>', (lambda event, e=ents: fetch(e)))   
-    b1 = tk.Button(root, text='Submit',
-            command=(lambda e=ents: fetch(e)))
-    b1.pack(side=tk.LEFT, padx=5, pady=5)
-    root.mainloop()
-    
-
-
-# get a file save folder location using tkinter
-def get_save_folder_location():
-    from tkinter import filedialog
-    import tkinter as tk
-    root = tk.Tk()
-    root.withdraw()
-    file_path = filedialog.askdirectory(initialdir = "/",title = "Select folder to save files")
-    file_path = file_path_to_windows_friendly(file_path)
-    return file_path
-
-
-# tkinter prompt to select yes or no
-def prompt_yes_no(question):
-    from tkinter import messagebox
-    import tkinter as tk
-    root = tk.Tk()
-    root.withdraw()
-    response = messagebox.askyesno("Merge PDFs", question)
-    return response
-
-
-# tkinter dialog box to select multiple pdf file paths
-def select_multiple_pdf_files():
-    from tkinter import filedialog
-    import tkinter as tk
-    root = tk.Tk()
-    root.withdraw()
-    file_paths = filedialog.askopenfilenames(initialdir = "/",title = "Select files",filetypes = (("pdf files","*.pdf"),("all files","*.*")))
-    return file_paths
 
 
 values = input_window()
 if values is not None:
-    client_name = values[0]
-    inspection_address = values[1]
-    unit_number = values[2]
-    inspector_file_name = values[3]
-    inspector_name = inspector_file_name.split('-')[0].title()
-    inspector_license = inspector_file_name.split('-')[1].title()
-    csv_lead_file = values[4]
-    csv_lead_file = Path(csv_lead_file)
-    additional_pdf_files = values['PDF_PATHS'].split(';')
-    additional_pdf_files = [Path(file) for file in additional_pdf_files]
-    save_location = values[6]
-    save_location = Path(save_location)
+    client_name = values['CLIENT_NAME']
+    inspection_address = values['INSPECTION_ADDRESS']
+    unit_number = values['UNIT_NUMBER']
+    inspector_file_name = values['INSPECTOR']
+    inspector_name, inspector_license = map(str.title, inspector_file_name.split('-'))
+    csv_lead_file = Path(values['CSV_LEAD_REPORT'])
+    additional_pdf_files = [Path(file) for file in values['PDF_PATHS'].split(';')]
+    save_location = Path(values['SAVE_FOLDER'])
 else:
     sys.exit("User cancelled operation")
 
 
-
-
-
-
-
-
-    
-    
-
-
-##############################################FIX THIS
+    ##############################################FIX THIS
 
 columns_to_keep = ['Reading #', 'Concentration',
        'Calibration Reading', 'Date', 'Time', 'Room Choice', 'Structure', 'Member', 'Substrate', 'Wall', 'Location', 'Paint Color', 'Paint Condition', 'Notes']
@@ -466,16 +340,6 @@ df = remove_all_but_columns(df, columns_to_keep)
 df = set_df_column_names(df, columns_to_keep)
 df['Concentration'] = df['Concentration'].astype(float)
 df = add_result_column(df)
-# merge room and room number columns then remove room number col
-# missing_room_df = remove_calibration_readings(df)
-# if missing_room_df['Room Number'].isnull().values.any():
-#     warning_message("You are mising some or all numbers in your [Room Number] column. Program will continue..")
-    
-
-
-# df['Room Number'] = df['Room Number'].fillna('')
-# df["Room"] = df['Room Number'].astype(str) +" "+ df["Room"].astype(str)
-# df.drop('Room Number', axis=1, inplace=True)
 
 
 clean_df = df
@@ -608,10 +472,13 @@ fields = {'start_date': start_date, 'end_date': end_date, 'calibration_total': c
 
 # dialog_fields = ['location name', 'inspection address', 'report number']
 
+# load json file with highlighted structures
+with open('highlight_structures.json') as f:
+    highlight_structures = json.load(f)
 
-user_fields = {'client_name': client_name, 'inspection_address': inspection_address, 'unit_number': unit_number, 'inspector_name': inspector_name, 'inspector_license': inspector_license}
+user_fields = {'client_name': client_name, 'inspection_address': inspection_address, 'unit_number': unit_number, 'inspector_name': inspector_name, 'inspector_license': inspector_license, 'highlight_structures': highlight_structures}
 
-tables = {'summary_df': summary_df_dict, 'results_df': report_df_dict, 'sequential_df': sequential_df_dict, 'headings': report_df_dict[0].keys(), 'notes': note_dict, 'branding': branding}
+tables = {'summary_df': summary_df_dict, 'results_df': report_df_dict, 'sequential_df': sequential_df_dict, 'headings': report_df_dict[0].keys(), 'notes': note_dict}
 
 all_fields = {**user_fields, **fields, **tables}
 
