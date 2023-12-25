@@ -80,6 +80,22 @@
         <th>{{ item }}</th>
         {% endfor %}
       </tr>
+      {% set highlight_structures = [
+         'door',
+         'door jamb',
+         'door frame',
+         'right casing',
+         'right jamb',
+         'left casing',
+         'left jamb',
+         'sill',
+         'closet door',
+         'closet door jamb',
+         'closet door frame',
+         'apt door frame',
+         'apt door',
+        ] 
+      %}
       {% for dict in sequential_df %} {% set row_class = 'color1' if loop.index
       is odd else 'color2' %} {% if dict['Result'] == 'Positive' or
       dict['Result'] == 'Inconclusive' %}
@@ -92,9 +108,8 @@
       </tr>
 
       <tr class="{{ row_class }} negative-table-row">
-        {% endif %} {% for key, value in dict.items() %} {% if
-        (dict['Structure'] == 'Window' or dict['Structure'] == 'Door') and
-        (dict['Result'] == 'Positive' or dict['Result'] == 'Inconclusive') %}
+        {% endif %} {% for key, value in dict.items() %} 
+        {% if dict['Member'].lower() in highlight_structures and (dict['Result'] == 'Positive' or dict['Result'] == 'Inconclusive') %}
         <td>
           <div class="y">{{ value }}</div>
         </td>
@@ -124,8 +139,8 @@
       {% for dict in summary_df %} {% set row_class = 'color1' if loop.index is
       odd else 'color2' %}
       <tr class="{{ row_class }} positive-table-row">
-        {% for key, value in dict.items() %} {% if (dict['Structure'] ==
-        'Window' or dict['Structure'] == 'Door') %}
+        {% for key, value in dict.items() %} 
+        {% if dict['Member'].lower() in highlight_structures %}
         <td>
           <div class="y">{{ value }}</div>
         </td>

@@ -425,15 +425,15 @@ if values is not None:
     client_name = values[0]
     inspection_address = values[1]
     unit_number = values[2]
-    inspector_name = values[3]
-    inspector_license = values[4]
-    csv_lead_file = values[5]
+    inspector_file_name = values[3]
+    inspector_name = inspector_file_name.split('-')[0].title()
+    inspector_license = inspector_file_name.split('-')[1].title()
+    csv_lead_file = values[4]
     csv_lead_file = Path(csv_lead_file)
     additional_pdf_files = values['PDF_PATHS'].split(';')
     additional_pdf_files = [Path(file) for file in additional_pdf_files]
-    save_location = values[7]
+    save_location = values[6]
     save_location = Path(save_location)
-    branding = values[8]
 else:
     sys.exit("User cancelled operation")
 
@@ -656,7 +656,7 @@ else:
 additional_pdf_files.insert(0, Path('./additional_pdfs/cover.pdf'))
 
 #add final page
-additional_pdf_files.append(Path('./additional_pdfs/license.pdf'))
+additional_pdf_files.append(Path('./additional_pdfs/inspectors/' + inspector_file_name + '.pdf'))
 
 from html2pdf import merge_pdfs
 
