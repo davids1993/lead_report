@@ -5,9 +5,29 @@ import shutil
 import re
 
 import json
+import os
+
+print("Current working directory:", os.getcwd())
+
+# get base dir to executable (if running as pyinstaller executable)
+def get_base_path():
+    # Check if the app is running as a PyInstaller bundle
+    if getattr(sys, 'frozen', False):
+        # If it's a bundle, use the executable's directory
+        return os.path.dirname(sys.executable)
+    else:
+        # If it's not a bundle, use the script's directory
+        return os.path.dirname(__file__)
+    
+base_path = get_base_path()
+save_folder = Path(base_path) / 'additional_pdfs' / 'inspectors'
+
+if not os.path.exists(save_folder):
+    os.makedirs(save_folder)
+
 
 inspector_names = []
-for file in Path('additional_pdfs/inspectors').iterdir():
+for file in save_folder.iterdir():
     if file.suffix == '.pdf':
         inspector_names.append(file.stem)
 
@@ -125,6 +145,7 @@ def input_window():
                         structure_types_window['-STRUCTURE_LIST-'].update(values=all_structures)
                         # clear input field
                         structure_types_window['-NEW_STRUCTURE-'].update('')
+                        window_main['STRUCTURE_LIST'].update(values=all_structures)
                 elif structure_types_event == '-DELETE_STRUCTURE-':
                     selected_structures = structure_types_values['-STRUCTURE_LIST-']
                     if selected_structures:
@@ -133,6 +154,7 @@ def input_window():
                         structure_types_window['-STRUCTURE_LIST-'].update(values=all_structures)
                         # clear input field
                         structure_types_window['-NEW_STRUCTURE-'].update('')
+                        window_main['STRUCTURE_LIST'].update(values=all_structures)
         elif event == 'Edit Clients':
             clients_window = create_clients_window()
             while True: 
@@ -148,6 +170,7 @@ def input_window():
                         clients_window['-CLIENT_LIST-'].update(values=clients)
                         # clear input field
                         clients_window['-NEW_CLIENT-'].update('')
+                        window_main['CLIENT_NAME'].update(values=clients)
                 elif client_event == '-DELETE_CLIENT-':
                     selected_clients = client_values['-CLIENT_LIST-']
                     if selected_clients:
@@ -156,6 +179,7 @@ def input_window():
                         clients_window['-CLIENT_LIST-'].update(values=clients)
                         # clear input field
                         clients_window['-NEW_CLIENT-'].update('')
+                        window_main['CLIENT_NAME'].update(values=clients)
             
         elif event == 'Edit Inspectors':
             inspector_window = create_edit_inspectors_window()
@@ -175,25 +199,28 @@ def input_window():
                         # validate file name follows letters-numbers.pdf format (ex. 'John Doe-1234.pdf')
                         pattern = r'^[a-zA-Z\s]+-\d+\.pdf$'
                         if re.match(pattern, new_file_name):
-                            shutil.copy2(pdf_file, Path('additional_pdfs/inspectors') / new_file_name)
-                            inspector_names.append(new_file_name)
+                            shutil.copy2(pdf_file, save_folder / new_file_name)
+                            inspector_names.append(Path(new_file_name).stem)
                             inspector_window['-INSPECTOR_LIST-'].update(values=inspector_names)
                             # clear input fields
                             inspector_window['INSPECTOR_PDF'].update('')
                             inspector_window['-NEW_FILE_NAME-'].update('')
+                            window_main['INSPECTOR'].update(values=inspector_names)
                         else:
                             sg.popup('Invalid file name. It should be in the format [NAME]-[NUM].pdf')
                 elif inspector_event == '-DELETE_INSPECTOR-':
                     selected_inspectors = inspector_values['-INSPECTOR_LIST-']
                     if selected_inspectors:
                         for inspector in selected_inspectors:
-                            inspector_file = Path('additional_pdfs/inspectors') / (inspector + '.pdf')
+                            inspector_file = save_folder / (inspector + '.pdf')
                             if inspector_file.exists():
                                 inspector_file.unlink()
                         for selected_inspector in selected_inspectors:
                             while selected_inspector in inspector_names:
                                 inspector_names.remove(selected_inspector)
                         inspector_window['-INSPECTOR_LIST-'].update(values=inspector_names)
+                        # update main window inspector list
+                        window_main['INSPECTOR'].update(values=inspector_names)
                         # clear input fields
                         inspector_window['INSPECTOR_PDF'].update('')
                         inspector_window['-NEW_FILE_NAME-'].update('')
