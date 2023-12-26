@@ -11,6 +11,7 @@ from datetime import date
 import numpy as np
 import sys
 import json
+import os
 
 
 
@@ -519,11 +520,23 @@ if Path.is_file(additional_pdf_files[0]):
 else:
     additional_pdf_files = [report_file]
     
+# get base dir to executable (if running as pyinstaller executable)
+def get_base_path():
+    # Check if the app is running as a PyInstaller bundle
+    if getattr(sys, 'frozen', False):
+        # If it's a bundle, use the executable's directory
+        return os.path.dirname(sys.executable)
+    else:
+        # If it's not a bundle, use the script's directory
+        return os.path.dirname(__file__)
+
+base_path = get_base_path()
 #add report cover
-additional_pdf_files.insert(0, Path('./additional_pdfs/cover.pdf'))
+additional_pdf_files.insert(0, Path('./other_pdfs/cover.pdf'))
 
 #add final page
-additional_pdf_files.append(Path('./additional_pdfs/inspectors/' + inspector_file_name + '.pdf'))
+# additional_pdf_files.append(Path('./additional_pdfs/inspectors/' + inspector_file_name + '.pdf'))
+additional_pdf_files.append(Path(base_path + '/additional_pdfs/inspectors/' + inspector_file_name + '.pdf'))
 
 from html2pdf import merge_pdfs
 
