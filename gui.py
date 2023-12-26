@@ -73,7 +73,7 @@ def create_edit_inspectors_window():
         # list of inspectors 
         [sg.Listbox(values=inspector_names, size=(40, 10), key='-INSPECTOR_LIST-')],
         [sg.Text('Inspector PDF:', size=(15, 1)), sg.Input(key='INSPECTOR_PDF'), sg.FileBrowse(file_types=(('PDF Files', '*.pdf'),), key='PDF_BROWSE')],
-        [sg.Text('Change file name (Optional):', size=(15, 1)), sg.InputText(key='-NEW_FILE_NAME-')],
+        [sg.Text('Change file name (Optional):', size=(25, 1)), sg.InputText(size=(20, 1), key='-NEW_FILE_NAME-')],
         [sg.Button('Add Inspector', key='-ADD_INSPECTOR-')],
         [sg.Button('Delete Inspector', key='-DELETE_INSPECTOR-')],
         [sg.Button('Close')]
