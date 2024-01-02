@@ -7,7 +7,6 @@ import re
 import json
 import os
 
-print("Current working directory:", os.getcwd())
 
 # get base dir to executable (if running as pyinstaller executable)
 def get_base_path():
@@ -145,7 +144,6 @@ def input_window():
                         structure_types_window['-STRUCTURE_LIST-'].update(values=all_structures)
                         # clear input field
                         structure_types_window['-NEW_STRUCTURE-'].update('')
-                        window_main['STRUCTURE_LIST'].update(values=all_structures)
                 elif structure_types_event == '-DELETE_STRUCTURE-':
                     selected_structures = structure_types_values['-STRUCTURE_LIST-']
                     if selected_structures:
@@ -154,7 +152,6 @@ def input_window():
                         structure_types_window['-STRUCTURE_LIST-'].update(values=all_structures)
                         # clear input field
                         structure_types_window['-NEW_STRUCTURE-'].update('')
-                        window_main['STRUCTURE_LIST'].update(values=all_structures)
         elif event == 'Edit Clients':
             clients_window = create_clients_window()
             while True: 
@@ -197,7 +194,7 @@ def input_window():
                         else:
                             new_file_name = pdf_file.name
                         # validate file name follows letters-numbers.pdf format (ex. 'John Doe-1234.pdf')
-                        pattern = r'^[a-zA-Z\s]+-\d+\.pdf$'
+                        pattern = r'^[a-zA-Z\s]+-[a-zA-Z0-9-]+\.pdf$'
                         if re.match(pattern, new_file_name):
                             shutil.copy2(pdf_file, save_folder / new_file_name)
                             inspector_names.append(Path(new_file_name).stem)
@@ -207,7 +204,7 @@ def input_window():
                             inspector_window['-NEW_FILE_NAME-'].update('')
                             window_main['INSPECTOR'].update(values=inspector_names)
                         else:
-                            sg.popup('Invalid file name. It should be in the format [NAME]-[NUM].pdf')
+                            sg.popup('Invalid file name. It should be in the format [FName LName]-[License#].pdf')
                 elif inspector_event == '-DELETE_INSPECTOR-':
                     selected_inspectors = inspector_values['-INSPECTOR_LIST-']
                     if selected_inspectors:
