@@ -315,7 +315,7 @@ if values is not None:
     inspection_address = values['INSPECTION_ADDRESS']
     unit_number = values['UNIT_NUMBER']
     inspector_file_name = values['INSPECTOR']
-    inspector_name, inspector_license = map(str.title, inspector_file_name.split('-'))
+    inspector_name, inspector_license = map(str.title, inspector_file_name.split('-', 1))
     csv_lead_file = Path(values['CSV_LEAD_REPORT'])
     additional_pdf_files = [Path(file) for file in values['PDF_PATHS'].split(';')]
     save_location = Path(values['SAVE_FOLDER'])
@@ -532,13 +532,14 @@ def get_base_path():
 
 base_path = get_base_path()
 #add report cover
-additional_pdf_files.insert(0, Path('./other_pdfs/cover.pdf'))
 
+
+additional_pdf_files.insert(0, Path(base_path + '/additional_pdfs/cover.pdf'))
 #add final page
 # additional_pdf_files.append(Path('./additional_pdfs/inspectors/' + inspector_file_name + '.pdf'))
 additional_pdf_files.append(Path(base_path + '/additional_pdfs/inspectors/' + inspector_file_name + '.pdf'))
 # add company license as final page
-additional_pdf_files.append(Path(base_path + '/other_pdfs/license.pdf'))
+additional_pdf_files.append(Path(base_path + '/additional_pdfs/license.pdf'))
 
 from html2pdf import merge_pdfs
 
