@@ -13,7 +13,7 @@ from PyPDF2 import PdfMerger
 def merge_pdfs(pdf_list, output):
     merger = PyPDF2.PdfMerger()
     for pdf in pdf_list:
-        merger.append(pdf)
+        merger.append(pdf, import_bookmarks=False)
         
     merger.write(output)
     merger.close()
