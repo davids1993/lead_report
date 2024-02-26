@@ -233,7 +233,9 @@ def instrument_details(df):
     type = instrument_type.iloc[2,1]
     serial = instrument_type.iloc[3,1]
     info = {'name': name, 'model': model, 'type': type, 'serial': serial}
-    return ', '.join(str(key).upper() + ": " + str(value) for key, value in info.items())
+    # return values as a string with a space between each value
+    return ' '.join(value for key, value in info.items())
+
 
 
 # if any positive readings - return true
@@ -453,6 +455,19 @@ calibration_total = total_num_calibration_tests(clean_df)
 if calibration_total == 0:
     warning_message("No calibration tests were found in the file. You may want to check your spelling. The program will continue..")
     
+    
+with open('highlight_structures.json') as f:
+    highlight_structures = json.load(f)
+    
+    
+    
+# get number of positive readings where [member] column is in the list of structures loaded from json file "highlight_structures.json"
+def friction_positive_readings(df):
+    df = df[df['Result'] == 'Positive']
+    df = df[df['Member'].str.lower().isin(highlight_structures)]
+    return len(df.index)
+    
+    
 
 without_calibration_df = remove_calibration_readings(clean_df)
 start_date = get_testing_start_date(clean_df)
@@ -462,6 +477,7 @@ positive_readings = num_positive_readings(clean_df)
 inconlusive_readings = num_inconclusive_readings(clean_df)
 instrument_detail = instrument_details(field_df)
 results = is_positive_readings(clean_df)
+friction_positives = friction_positive_readings(clean_df)
 
 
 if results == True:
@@ -469,13 +485,12 @@ if results == True:
 else:
     results = 'Negative'
 
-fields = {'start_date': start_date, 'end_date': end_date, 'calibration_total': calibration_total, 'readings_total': readings_total, 'positive_readings': positive_readings, 'inconlusive_readings': inconlusive_readings, 'instrument_detail': instrument_detail, 'results': results, 'calibrations': calibration_df_dict, 'report_date': date.today().strftime('%m/%d/%Y')}
+fields = {'start_date': start_date, 'end_date': end_date, 'calibration_total': calibration_total, 'readings_total': readings_total, 'positive_readings': positive_readings, 'inconlusive_readings': inconlusive_readings, 'instrument_detail': instrument_detail, 'results': results, 'calibrations': calibration_df_dict, 'report_date': date.today().strftime('%m/%d/%Y'), 'friction_positives': friction_positives}
 
 # dialog_fields = ['location name', 'inspection address', 'report number']
 
 # load json file with highlighted structures
-with open('highlight_structures.json') as f:
-    highlight_structures = json.load(f)
+
 
 user_fields = {'client_name': client_name, 'inspection_address': inspection_address, 'unit_number': unit_number, 'inspector_name': inspector_name, 'inspector_license': inspector_license, 'highlight_structures': highlight_structures}
 
@@ -550,7 +565,6 @@ sg.popup_ok('Your Report has sucessfuly been generated!', background_color='ligh
     
     
     
-
 
 
 

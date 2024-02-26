@@ -9,7 +9,7 @@
   </head>
   <body>
     <!-- Content for Static Frame 'header_frame' -->
-    {% if branding %}
+
     <div id="header_content">
       <div id="header_address">
         Lead Based Paint Inspection Report
@@ -24,9 +24,7 @@
         Inspection Site: {{inspection_address}}, Unit {{unit_number}} <br />
       </div>
     </div>
-    {% endif %} {% if not branding %}
-    <div id="header_content">Lead Report</div>
-    {% endif %}
+
 
     <!-- Content for Static Frame 'footer_frame' -->
     <!-- <div id="footer_content">Page <pdf:pagenumber /> </div> -->
@@ -35,33 +33,124 @@
     </div>
     </div>
 
+
+    <!-- page 1 -->
+    <div class="cover-sheet">
+      <div class="header">
+        <table class="header-table" width="100%">
+          <tr>
+            <td class="logo-cell">
+              <img src="logo/Logo 05.jpg" alt="logo" class="logo">
+            </td>
+            <td class="address-cell">
+              <!-- Add your address here -->
+              <p>Secure Environmental Group</p>
+              <p>Commerce Drive</p>
+              <p>Suite 340</p>
+              <p>Cranford, NJ 07016</p>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <hr>  
+      <div class="report-details">
+        <h2>Lead Based Paint Executive Summary</h2>
+        <p>On {{start_date[0]}} lead-based paint testing was performed on painted building components at the address & apartment mentioned above.</p>
+        <p>An X-Ray Fluorescence Device (XRF) was used to test the painted components. Following you will find the results of the Lead-Based Paint inspection that was performed on these components.</p>
+        <p>Included with this report is a Lead in Paint Certification sheet. This Certification sheets contains pertinent information including but not limited to license numbers, property location, date of inspection, and instrumentation used for testing.</p>
+        <p>The enclosed Data Charts contain the results of this inspection. The important figures on the Charts are in the combined columns. The Action Level for lead in paint in New York, as set forth by the United States Environmental Protection Agency (EPA) and the Department of Housing and Urban Development (HUD), is 0.5 milligram per square centimeter (mg/cm2).</p>
+        <ul>
+            <li>Results below 0.5 mg/cm2 are negative (acceptable); results equal to or above this figure are positive (unacceptable) for lead-based paint.</li>
+            <li>A building component displaying a positive result contains an unacceptable amount of lead in the paint and constitutes a serious health hazard if the paint is in poor condition or if it is disturbed.</li>
+            <li>Lead dust, when ingested or inhaled, is especially dangerous to children 6 years of age and younger.</li>
+        </ul>
+        <p>The calibration results of the XRF device, which was used for the lead-based paint testing, are listed on the Data Charts. <br>
+          The XRF calibration tests are the first six readings on the last six readings on the Standard. These tests are taken in order to ensure that the XRF device is operating and performing properly. <br>
+          Components supplied by the calibration check contain a known amount of lead, which is compared to the readings.</p>
+      </div>
+      </div>
+
+  <pdf:nextpage />
+
+
+  <!-- page 2 -->
+  <!-- <div class="cover-sheet">
+    <div class="header">
+      <img src="logo/Logo 05.jpg" alt="logo" class="logo">
+    </div>
+    <hr> -->
+    <div class="cover-sheet">
+      <div class="header">
+        <table class="header-table" width="100%">
+          <tr>
+            <td class="logo-cell">
+              <img src="logo/Logo 05.jpg" alt="logo" class="logo">
+            </td>
+            <td class="address-cell">
+              <!-- Add your address here -->
+              <p>Secure Environmental Group</p>
+              <p>Commerce Drive</p>
+              <p>Suite 340</p>
+              <p>Cranford, NJ 07016</p>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <hr>  
+    <div class="report-details">
+      <p>Attached is a copy of the lead paint inspection report. The first pages of the report indicate the areas tested. The readings are detailed by room, wall, and position on the wall. In each room, side A is always the same wall as the room entry, with sides B, C, and D following in a clockwise direction. The sides are noted in the data charts.</p>
+        <h2>Lead Based Paint: <span class="lead-paint">{{"Present" if positive_readings > 0 else "Not Present"}}</span> </h2>
+        <h2>Lead-In-Paint Hazards: <span class="lead-friction">{{"Present" if friction_positives > 0 else "Not Present"}}</span></h2>
+        <p>A total of {{readings_total}} readings, including 12 calibration checks were taken on painted or varnished components. The results indicate that {{positive_readings}} positive readings were found during this inspection.</p>
+        <p>Please call us with any questions or concerns that you may have regarding this report or any other lead-based paint issues.</p>
+        <p>Sincerely,</p>
+        <p>{{inspector_name}}</p>
+        <p>Signed ____________________________________</p> 
+        <p>Inspector EPA Certification# {{inspector_license}}</p>
+        <br>
+        <p>Secure Environmental Group</p>
+        <p>Firm EPA Certification# LBP-F251759-1</p>
+        <p class="sup">STATEMENT: Secure Environmental Group LLC is responsible only for areas tested as of the date of inspection. Areas not tested in this report may not be assured as being lead safe. <br>
+          Always consult with Secure Environmental Group. <br>
+          Wall A is entry to room, B is to the left, C is to the center and D is to the right. Lead dust can be a hazard, even if test results show low Levels.
+          </p>
+  </div>
+
+  <pdf:nextpage />
+
+
+    
+
     <!-- cover page -->
     <div class="cover-sheet">
       <div class="header">
-        <img src="logo/Logo 05.jpg" alt="logo" class="logo" />
-        <h1>Lead Based Paint Inspection Report</h1>
+        <table class="header-table" width="100%">
+          <tr>
+            <td class="logo-cell">
+              <img src="logo/Logo 05.jpg" alt="logo" class="logo">
+            </td>
+            <td class="address-cell">
+              <!-- Add your address here -->
+              <p>Secure Environmental Group</p>
+              <p>Commerce Drive</p>
+              <p>Suite 340</p>
+              <p>Cranford, NJ 07016</p>
+            </td>
+          </tr>
+        </table>
       </div>
-      <div class="address">
-        Secure Environmental Group <br>
-        25 Commerce Drive <br>
-        Suite 340 <br>
-        Cranford, NJ 07016 <br>
-      </div>
+      <hr>  
+      <h2>Lead Based Paint Inspection Report</h2>
       <div class="report-details">
-        <p>
-          <strong>Inspection Site:</strong> {{inspection_address}}, Unit
-          {{unit_number}}
-        </p>
-        <p>
-          <strong>Inspection Date:</strong> {{start_date[0]}} - {{end_date[0]}}
-        </p>
-        <p><strong>Prepared For:</strong> {{client_name}}</p>
-        <p><strong>Instrument Type:</strong> {{instrument_detail}}</p>
-        <p><strong>Action Level:</strong> 0.5 mg/cm<sup>2</sup></p>
-        <p><strong>Inspected By:</strong> {{inspector_name}}</p>
-        <p><strong>Inspector License Number:</strong> {{inspector_license}}</p>
-        <p><strong>Total Readings:</strong> {{readings_total}}</p>
-        <p><strong>Positive Readings:</strong> {{positive_readings}}</p>
+        <p>Inspection Site: <span class="light-text">{{inspection_address}}, Unit {{unit_number}}</span></p>
+        <p>Inspection Date: <span class="light-text">{{start_date[0]}} - {{end_date[0]}}</span></p>
+        <p>Prepared For: <span class="light-text">{{client_name}}</span></p>
+        <p>Instrument Type: <span class="light-text">{{instrument_detail}}</span></p>
+        <p>Action Level: <span class="light-text">0.5 mg/cm<sup>2</sup></span></p>
+        <p>Inspected By: <span class="light-text">{{inspector_name}}</span></p>
+        <p>Inspector License Number: <span class="light-text">{{inspector_license}}</span></p>
+        <p>Total Readings: <span class="light-text">{{readings_total}}</span></p>
+        <p>Positive Readings: <span class="light-text">{{positive_readings}}</span></p>
       </div>
     </div>
 
