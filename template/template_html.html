@@ -19,8 +19,6 @@
         Inspection Date: {{start_date[0]}} <br />
         Action Level: 0.5 mg/cm2. Total <br />
         Readings: {{readings_total}} <br />
-        Unit Started: {{start_date[1]}} <br />
-        Unit Ended:{{end_date[1]}} <br />
         Inspection Site: {{inspection_address}}, Unit {{unit_number}} <br />
       </div>
     </div>
@@ -99,13 +97,30 @@
       <hr>  
     <div class="report-details">
       <p>Attached is a copy of the lead paint inspection report. The first pages of the report indicate the areas tested. The readings are detailed by room, wall, and position on the wall. In each room, side A is always the same wall as the room entry, with sides B, C, and D following in a clockwise direction. The sides are noted in the data charts.</p>
-        <h2>Lead Based Paint: <span class="lead-paint">{{"Present" if positive_readings > 0 else "Not Present"}}</span> </h2>
-        <h2>Lead-In-Paint Hazards: <span class="lead-friction">{{"Present" if friction_positives > 0 else "Not Present"}}</span></h2>
+        <h2>Lead Based Paint: 
+            <span class="lead-paint {{'present' if positive_readings > 0 else 'not-present'}}">
+                {{"Present" if positive_readings > 0 else "Not Present"}}
+            </span> 
+        </h2>
+        <h2>Lead-In-Paint Hazards: 
+            <span class="lead-friction {{'present' if friction_positives > 0 else 'not-present'}}">
+                {{"Present" if friction_positives > 0 else "Not Present"}}
+            </span>
+        </h2>
         <p>A total of {{readings_total}} readings, including 12 calibration checks were taken on painted or varnished components. The results indicate that {{positive_readings}} positive readings were found during this inspection.</p>
         <p>Please call us with any questions or concerns that you may have regarding this report or any other lead-based paint issues.</p>
         <p>Sincerely,</p>
         <p>{{inspector_name}}</p>
-        <p>Signed ____________________________________</p> 
+        <table class="signature-table" cellpadding="0" cellspacing="0">
+          <tr>
+            <td class="signature-cell">
+              <h1 class="signature">{{inspector_name}}</h1>
+            </td>
+          </tr>
+          <tr>
+            <td class="signed-line">Signed:_________________________________</td>
+          </tr>
+        </table>
         <p>Inspector EPA Certification# {{inspector_license}}</p>
         <br>
         <p>Secure Environmental Group</p>

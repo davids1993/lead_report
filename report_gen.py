@@ -546,18 +546,89 @@ def get_base_path():
         return os.path.dirname(__file__)
 
 base_path = get_base_path()
-#add report cover
 
 
-additional_pdf_files.insert(0, Path(base_path + '/additional_pdfs/cover.pdf'))
+from reportlab.pdfgen import canvas
+from reportlab.lib.colors import white
+from PyPDF2 import PdfReader, PdfWriter
+from pathlib import Path
+
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+def create_overlay_pdf(output_pdf_path, lines, font_size=20):
+    """
+    Create an overlay PDF with multiple lines of text.
+
+    Parameters:
+    - output_pdf_path: Path to the output PDF file.
+    - lines: A list of tuples, where each tuple contains a line of text and its coordinates (x, y).
+    - font_size: The font size for the text.
+    """
+    pdfmetrics.registerFont(TTFont('teko', 'Teko-VariableFont_wght.ttf'))
+    c = canvas.Canvas(str(output_pdf_path))
+    c.setFillColor(white)
+    c.setFont('teko', font_size)
+    
+    for line, (x, y) in lines:
+        c.drawString(x, y, line)
+
+    c.save()
+
+def merge_cover_pdfs(original_pdf_path, overlay_pdf_path, output_pdf_path):
+    """
+    Merge the original PDF with an overlay PDF.
+
+    Parameters:
+    - original_pdf_path: Path to the original PDF file.
+    - overlay_pdf_path: Path to the overlay PDF file.
+    - output_pdf_path: Path to the output PDF file.
+    """
+    original_pdf = PdfReader(str(original_pdf_path))
+    overlay_pdf = PdfReader(str(overlay_pdf_path))
+    
+    writer = PdfWriter()
+
+    page = original_pdf.pages[0]
+    page.merge_page(overlay_pdf.pages[0])
+
+    writer.add_page(page)
+    for pageNum in range(1, len(original_pdf.pages)):
+        writer.add_page(original_pdf.pages[pageNum])
+
+    with open(str(output_pdf_path), "wb") as f_out:
+        writer.write(f_out)
+
+
+
+cover_pdf_dir = Path(base_path + '/additional_pdfs/cover.pdf')
+overlay = Path(base_path + '/additional_pdfs/custom_overlay.pdf')
+custom_cover_dir = Path(base_path + '/additional_pdfs/custom_cover.pdf')
+
+
+
+# lines of text to add to the overlay PDF
+lines_and_coords = [(f"{client_name}", (46, 251)), (f"{inspection_address}", (46, 185)), (f"Unit#{unit_number}", (46, 165))]
+
+# Create an overlay PDF with the specified text
+create_overlay_pdf(overlay, lines_and_coords)  
+
+# Merge the overlay PDF with the original cover PDF
+merge_cover_pdfs(cover_pdf_dir, overlay, custom_cover_dir)
+
+
+
+additional_pdf_files.insert(0, Path(base_path + '/additional_pdfs/custom_cover.pdf'))
 #add final page
 # additional_pdf_files.append(Path('./additional_pdfs/inspectors/' + inspector_file_name + '.pdf'))
 additional_pdf_files.append(Path(base_path + '/additional_pdfs/inspectors/' + inspector_file_name + '.pdf'))
 # add company license as final page
 additional_pdf_files.append(Path(base_path + '/additional_pdfs/license.pdf'))
 
-from html2pdf import merge_pdfs
 
+from html2pdf import merge_pdfs
+print(additional_pdf_files)
+print(f"{save_location}/{inspection_address}, {unit_number} - XRF Inspection Report.pdf")
 merge_pdfs(additional_pdf_files, f"{save_location}/{inspection_address}, {unit_number} - XRF Inspection Report.pdf")
 
     

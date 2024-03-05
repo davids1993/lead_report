@@ -34,6 +34,7 @@
     margin-left: 500px;
 }
 
+
 .report{
     text-align: center;
 }
@@ -46,6 +47,37 @@
 
 } */
 
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('CedarvilleCursive-Regular.ttf') format('truetype');
+}
+
+/* ... other CSS ... */
+
+.signature-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  line-height: 0;
+  }
+  
+  .signature-cell {
+  padding-left: 75px; /* Adjust as needed /
+  padding-bottom: 0; / Remove bottom padding */
+  }
+  
+  .signature {
+  font-family: 'MyCustomFont';
+  font-size: 20px;
+  margin-bottom: 5px; /* Reduce margin bottom to move signature closer to the line */
+  padding-bottom: 0;
+  }
+  
+  .signed-line {
+  font-size: 16px; /* Adjust as needed */
+  margin-top: 0;
+  padding-top: 0;
+  }
 
 
 @page report {
@@ -70,15 +102,7 @@
     font-family: 'Arial', sans-serif;
   }
   
-/* .cover-sheet .header {
-text-align: left;
-margin-bottom: 20px;
-}
 
-
-.cover-sheet .logo {
-height: auto;
-width: 167px; /* Adjust as necessary */
 
 
 .cover-sheet .header {
@@ -147,6 +171,15 @@ width: 167px; /* Adjust as necessary */
     font-size: 10px;
     font-weight: normal;
   }
+
+
+  .present {
+    color: red;
+}
+
+.not-present {
+    color: green;
+}
 
   .light-text {
     font-weight: normal;
