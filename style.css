@@ -1,3 +1,32 @@
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('CedarvilleCursive-Regular.ttf') format('truetype');
+}
+
+
+
+
+
+@page report {
+  size: letter landscape;
+  @frame header_frame {         
+      -pdf-frame-content: header_content;
+      left: 100pt; width: 600pt; top: 10pt; height: 100pt;
+  }
+  @frame content_frame {         
+      left: 100pt; width: 600pt; top: 110pt; height: 430pt; 
+  }
+  @frame footer_frame {           
+      -pdf-frame-content: footer_content;
+      left: 100pt; width: 600pt; top: 580pt; height: 40pt; 
+  }
+}
+
+
+
+
+
+
 .eor {
     font-family: 'Times New Roman', Times, serif;
     font-size: x-large;
@@ -39,20 +68,6 @@
     text-align: center;
 }
 
-/* @page cover { 
-    size: letter portrait;
-    @frame content_frame {         
-        left: 100pt; width: 600pt; top: 110pt; height: 430pt; 
-    }
-
-} */
-
-@font-face {
-  font-family: 'MyCustomFont';
-  src: url('CedarvilleCursive-Regular.ttf') format('truetype');
-}
-
-/* ... other CSS ... */
 
 .signature-table {
   width: 100%;
@@ -80,20 +95,6 @@
   }
 
 
-@page report {
-    size: letter landscape;
-    @frame header_frame {         
-        -pdf-frame-content: header_content;
-        left: 100pt; width: 600pt; top: 10pt; height: 100pt;
-    }
-    @frame content_frame {         
-        left: 100pt; width: 600pt; top: 110pt; height: 430pt; 
-    }
-    @frame footer_frame {           
-        -pdf-frame-content: footer_content;
-        left: 100pt; width: 600pt; top: 580pt; height: 40pt; 
-    }
-}
 
 .cover-sheet {
     max-width: 400px; /* Adjust width as needed */

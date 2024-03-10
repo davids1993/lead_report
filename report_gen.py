@@ -627,8 +627,6 @@ additional_pdf_files.append(Path(base_path + '/additional_pdfs/license.pdf'))
 
 
 from html2pdf import merge_pdfs
-print(additional_pdf_files)
-print(f"{save_location}/{inspection_address}, {unit_number} - XRF Inspection Report.pdf")
 merge_pdfs(additional_pdf_files, f"{save_location}/{inspection_address}, {unit_number} - XRF Inspection Report.pdf")
 
     
