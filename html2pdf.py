@@ -1,5 +1,6 @@
 import PyPDF2
 from xhtml2pdf import pisa
+from xhtml2pdf.files import pisaFileObject
 from PyPDF2 import PdfMerger
 
 
@@ -25,6 +26,12 @@ def merge_pdfs(pdf_list, output):
 
 # Utility function
 def convert_html_to_pdf(source_html, output_filename, encoding='utf-8'):
+    # monkey patch to fix the issue with the xhtml2pdf library
+    # library creates temp file and leaves it open. Later another process (reportlab) tries to open the file and fails
+    # this is not an issue in linux, but is an issue in windows
+    # below we are subverting the temp file creation and using the font file directly
+    pisaFileObject.getNamedFile = lambda self: self.uri
+    result_file = open(output_filename, "w+b")
     # open output file for writing (truncated binary)
     result_file = open(output_filename, "w+b")
 

@@ -1,11 +1,3 @@
-@font-face {
-  font-family: 'MyCustomFont';
-  src: url('CedarvilleCursive-Regular.ttf') format('truetype');
-}
-
-
-
-
 
 @page report {
   size: letter landscape;
@@ -80,6 +72,12 @@
   padding-left: 75px; /* Adjust as needed /
   padding-bottom: 0; / Remove bottom padding */
   }
+
+  @font-face {
+    font-family: 'MyCustomFont';
+    src: url('The-Constellation.ttf') format('truetype');
+  }
+
   
   .signature {
   font-family: 'MyCustomFont';
